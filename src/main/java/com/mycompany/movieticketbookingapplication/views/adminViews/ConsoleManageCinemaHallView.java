@@ -1,11 +1,11 @@
 package com.mycompany.movieticketbookingapplication.views.adminViews;
 
 import com.mycompany.movieticketbookingapplication.controllers.implementations.adminControllersImplementations.ManageSeatController;
+import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageCinemaHallController;
 import com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuOptions.AdminOperationsOption;
 import com.mycompany.movieticketbookingapplication.models.CinemaHall;
 import com.mycompany.movieticketbookingapplication.utils.ConsoleInputUtil;
 import java.util.List;
-import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageCinemaHallController;
 
 public class ConsoleManageCinemaHallView {
     private final ConsoleInputUtil inputReader;
@@ -50,7 +50,9 @@ public class ConsoleManageCinemaHallView {
 
     private void handleAddCinemaHall() {
         String cinemaHallName = getCinemaHallName();
-        cinemaHallController.addCinemaHall(cinemaHallName);
+        
+        CinemaHall cinemaHall = cinemaHallController.addCinemaHall(cinemaHallName);
+        handleManageSeats(cinemaHall);
         
         System.out.println("Cinema Hall added successfully.");
     }
@@ -79,6 +81,13 @@ public class ConsoleManageCinemaHallView {
         displayError("Invalid Choice");
     }
     
+    private void handleManageSeats(CinemaHall cinemaHall) {
+        if(inputReader.readBoolean("Do you want to continue to manage seats?")) {
+            ConsoleManageSeatView seatView = new ConsoleManageSeatView(new ManageSeatController(cinemaHall));
+            seatView.runSeatView();
+        }
+    }
+    
     private String getCinemaHallName() {
         return inputReader.readString("Enter Cinema Hall Name: ");
     }
@@ -93,9 +102,11 @@ public class ConsoleManageCinemaHallView {
         for(int i = 0;i < cinemaHallList.size();i++) {
             System.out.println(i + 1 + ". " + cinemaHallList.get(i).getName());
         }
+        System.out.println("0. Back");
         
         while(true) {
             int cinemaHallChoice = inputReader.readInt("Enter CinemaHall Choice: ");
+            if(cinemaHallChoice == 0) return null;
 
             if(cinemaHallChoice < 1 || cinemaHallChoice > cinemaHallList.size()) {
                 displayError("Invalid CinemaHall Choice.");

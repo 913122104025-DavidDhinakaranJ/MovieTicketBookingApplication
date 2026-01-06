@@ -13,8 +13,10 @@ public class ManageTheatreController implements IManageTheatreController {
     }
 
     @Override
-    public void addTheatre(String theatreName, String theatreAddress) {
-        theatreRepository.addTheatre(new Theatre(theatreName, theatreAddress));
+    public Theatre addTheatre(String theatreName, String theatreAddress) {
+        Theatre theatre = new Theatre(theatreName, theatreAddress);
+        theatreRepository.addTheatre(theatre);
+        return theatre;
     }
     
     @Override

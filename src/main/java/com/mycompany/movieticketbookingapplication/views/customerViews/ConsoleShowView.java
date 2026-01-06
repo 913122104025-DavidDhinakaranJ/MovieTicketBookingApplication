@@ -123,10 +123,11 @@ public class ConsoleShowView {
             i++;
         }
         
-        Booking booking = showController.createBooking(customer, availableSeats);
+        Booking booking = showController.createBooking(customer, selectedSeats);
         ConsolePaymentView paymentView = new ConsolePaymentView(booking.getPayment());
+        
         if(paymentView.handlePayment(booking.getTotalPrice())) {
-            booking.updateStatusToConfirmed();
+            showController.confirmBooking(booking);
         } else {
             booking.updateStatusToCancelled();
         }

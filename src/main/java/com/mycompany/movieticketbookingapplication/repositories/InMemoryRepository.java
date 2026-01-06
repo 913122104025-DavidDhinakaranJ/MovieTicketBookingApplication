@@ -44,6 +44,7 @@ public class InMemoryRepository implements IBookingRepository, IUserRepository, 
     @Override
     public void saveBooking(Booking booking) {
         bookings.add(booking);
+        booking.addBookingToCustomer();
     }
 
     @Override

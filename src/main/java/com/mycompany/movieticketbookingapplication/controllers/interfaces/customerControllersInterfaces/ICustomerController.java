@@ -5,6 +5,4 @@ import java.util.List;
 
 public interface ICustomerController {
     List<Booking> getBookingHistory();
-
-    void changePassword(String newPassword);
 }

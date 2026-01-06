@@ -13,8 +13,8 @@ public class ManageCinemaHallController implements IManageCinemaHallController {
     }
 
     @Override
-    public void addCinemaHall(String cinemaHallName) {
-        theatre.addHall(cinemaHallName);
+    public CinemaHall addCinemaHall(String cinemaHallName) {
+        return theatre.addHall(cinemaHallName);
     }
 
     @Override

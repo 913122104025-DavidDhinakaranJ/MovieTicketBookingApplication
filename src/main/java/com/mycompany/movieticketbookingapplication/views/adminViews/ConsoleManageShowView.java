@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.views.adminViews;
 
+import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageShowController;
 import com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuOptions.AdminOperationsOption;
 import com.mycompany.movieticketbookingapplication.models.CinemaHall;
 import com.mycompany.movieticketbookingapplication.models.Movie;
@@ -8,7 +9,6 @@ import com.mycompany.movieticketbookingapplication.models.Theatre;
 import com.mycompany.movieticketbookingapplication.utils.ConsoleInputUtil;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageShowController;
 
 public class ConsoleManageShowView {
     private final ConsoleInputUtil inputReader;
@@ -98,6 +98,11 @@ public class ConsoleManageShowView {
     
     private Show getShow() {
         List<Show> showList = showController.getAllShows();
+        if(showList.isEmpty()) {
+            System.out.println("No Shows Found");
+            return null;
+        }
+        
         for(int i = 0;i < showList.size();i++) {
             Show show = showList.get(i);
             System.out.println(i + 1 + ". Theatre: " + show.getTheatre().getName()
@@ -105,9 +110,11 @@ public class ConsoleManageShowView {
                     + "\tMovie: " + show.getMovie().getTitle()
                     + "\tTime: " + inputReader.formatDateTime(show.getStartTime()) + " - " + inputReader.formatDateTime(show.getEndTime()));
         }
+        System.out.println("0. Back");
         
         while(true) {
             int showChoice = inputReader.readInt("Enter Show Choice: ");
+            if(showChoice == 0) return null;
 
             if(showChoice < 1 || showChoice > showList.size()) {
                 displayError("Invalid Show Choice.");

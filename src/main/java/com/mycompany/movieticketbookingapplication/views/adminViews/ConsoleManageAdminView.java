@@ -66,15 +66,23 @@ public class ConsoleManageAdminView {
 
     private void handleManagePrivileges() {
         Admin admin = getAdmin();
+        if(admin == null) return;
         
         List<Privilege> existingPrivileges = admin.getPrivileges();
         List<Privilege> nonExistingPrivileges = Arrays.stream(Privilege.values()).filter(p -> !existingPrivileges.contains(p)).toList();
         
-        System.out.println("Grant Privileges: ");
-        Set<Privilege> grantPrivileges = getPrivileges(nonExistingPrivileges);
-                
-        System.out.println("Revoke Privileges: ");
-        Set<Privilege> revokePrivileges = getPrivileges(existingPrivileges);
+        Set<Privilege> grantPrivileges = EnumSet.noneOf(Privilege.class);
+        Set<Privilege> revokePrivileges = EnumSet.noneOf(Privilege.class);
+        
+        if(!nonExistingPrivileges.isEmpty()) {
+            System.out.println("Grant Privileges: ");
+            grantPrivileges = getPrivileges(nonExistingPrivileges);
+        }
+        
+        if(!existingPrivileges.isEmpty()) {
+            System.out.println("Revoke Privileges: ");
+            revokePrivileges = getPrivileges(existingPrivileges);
+        }
         
         manageAdminController.updatePrivileges(admin, grantPrivileges, revokePrivileges);
         
@@ -87,9 +95,11 @@ public class ConsoleManageAdminView {
         for(int i = 0; i < nonBlockedAdmins.size();i++) {
             System.out.println(i + 1 + ". " + nonBlockedAdmins.get(i));
         }
+        System.out.println("0. Back");
         
         while(true) {
             int blockChoice = inputReader.readInt("Enter Choice to block Admin: ");
+            if(blockChoice == 0) return;
 
             if(blockChoice <= 0 || blockChoice > nonBlockedAdmins.size()) {
                 displayError("Invalid Admin Choice");
@@ -112,9 +122,11 @@ public class ConsoleManageAdminView {
         for(int i = 0; i < blockedAdmins.size();i++) {
             System.out.println(i + 1 + ". " + blockedAdmins.get(i));
         }
+        System.out.println("0. Back");
         
         while(true) {
             int unblockChoice = inputReader.readInt("Enter Choice to unblock Admin: ");
+            if(unblockChoice == 0) return;
 
             if(unblockChoice <= 0 || unblockChoice > blockedAdmins.size()) {
                 displayError("Invalid Admin Choice");
@@ -140,16 +152,18 @@ public class ConsoleManageAdminView {
         for(int i = 0; i < admins.size();i++) {
             System.out.println(i + 1 + ". " + admins.get(i).getUsername());
         }
+        System.out.println("0. Back");
         
         while(true) {
-            int choice = inputReader.readInt("Enter Admin Choice: ") - 1;
+            int choice = inputReader.readInt("Enter Admin Choice: ");
+            if(choice == 0) return null;
 
-            if(choice < 0 || choice >= admins.size()) {
+            if(choice < 1 || choice > admins.size()) {
                 displayError("Invalid Admin Choice");
                 continue;
             }
             
-            return admins.get(choice);
+            return admins.get(choice - 1);
         }
     }
     

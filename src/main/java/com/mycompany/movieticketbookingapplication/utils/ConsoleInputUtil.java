@@ -26,6 +26,15 @@ public class ConsoleInputUtil {
         }
     }
     
+    public int readPositiveInt(String prompt) {
+        while(true) {
+            int input = readInt(prompt);
+            if(input > 0) return input;
+            
+            displayError("Please enter a positive integer.");
+        }
+    }
+    
     public String readString(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine().trim();

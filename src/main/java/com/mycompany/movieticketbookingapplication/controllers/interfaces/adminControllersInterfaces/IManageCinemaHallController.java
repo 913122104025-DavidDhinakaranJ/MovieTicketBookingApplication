@@ -4,7 +4,7 @@ import com.mycompany.movieticketbookingapplication.models.CinemaHall;
 import java.util.List;
 
 public interface IManageCinemaHallController {
-    void addCinemaHall(String cinemaHallName);
+    CinemaHall addCinemaHall(String cinemaHallName);
 
     List<CinemaHall> getCinemaHalls();
 

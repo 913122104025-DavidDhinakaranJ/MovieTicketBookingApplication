@@ -56,12 +56,33 @@ public class ConsoleMainView {
 
     private void handleRegistration() {
         IAuthView authView = new ConsoleAuthView(new AuthController(appContext.getUserRepository(), appContext.getCustomerFactory()));
-        authView.handleRegistration();  
+        User user = (User) authView.handleRegistration(); 
+        
+        handleRunLoginView(user);
     }
 
     private void handleLogin() {
         IAuthView authView = new ConsoleAuthView(new AuthController(appContext.getUserRepository(), null));
         User user = (User) authView.handleLogin();
+        
+        handleRunLoginView(user);
+    }
+
+    private void handleSearch() {
+        ConsoleSearchView searchView = new ConsoleSearchView(new SearchController(appContext.getMovieRepository()));
+        searchView.runSearchView();
+    }
+    
+    public void stopMainView() {
+        running = false;
+        System.out.println("Exiting the app.");
+    }
+
+    private void handleInvalidChoice() {
+        displayError("Invalid Choice");
+    }
+    
+    private void handleRunLoginView(User user) {
         if(user == null) return;
         
         if(user.isBlocked()) {
@@ -81,20 +102,6 @@ public class ConsoleMainView {
             }
         }
         appContext.getSessionContext().logout();
-    }
-
-    private void handleSearch() {
-        ConsoleSearchView searchView = new ConsoleSearchView(new SearchController(appContext.getMovieRepository()));
-        searchView.runSearchView();
-    }
-    
-    public void stopMainView() {
-        running = false;
-        System.out.println("Exiting the app.");
-    }
-
-    private void handleInvalidChoice() {
-        displayError("Invalid Choice");
     }
     
     private void displayError(String message) {

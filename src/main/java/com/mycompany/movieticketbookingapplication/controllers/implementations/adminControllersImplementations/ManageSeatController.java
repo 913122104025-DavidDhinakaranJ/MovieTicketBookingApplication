@@ -14,8 +14,8 @@ public class ManageSeatController implements IManageSeatController {
     }
 
     @Override
-    public void addSeat(String row, int seatNumber, SeatType type) {
-        cinemaHall.addSeat(row, seatNumber, type);
+    public void addSeats(int numberOfRows, int numberOfSeatsPerRow, SeatType type) {
+        cinemaHall.generateSeats(numberOfRows, numberOfSeatsPerRow, type);
     }
 
     @Override

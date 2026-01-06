@@ -58,6 +58,7 @@ public class ConsoleSearchView {
 
     private void handleSearchByTitle() {
         String title = getTitleChoice();
+        if(title == null) return;
         
         List<Movie> movies = searchController.getMovies(title);
         
@@ -139,7 +140,9 @@ public class ConsoleSearchView {
     }
     
     private String getTitleChoice() {
-        return inputReader.readString("Enter Title: ");
+        String input = inputReader.readString("Enter Title (press ENTER to go back): ");
+        if(input.isBlank()) return null;
+        return input;
     }
     
     private Genre getGenreChoice() {
@@ -147,9 +150,11 @@ public class ConsoleSearchView {
         for(int i = 0; i < genres.length;i++) {
             System.out.println(i + 1 + ". " + genres[i]);
         }
+        System.out.println("0. Back");
         
         while(true) {
             int genreChoice = inputReader.readInt("Enter Genre Choice: ");
+            if(genreChoice == 0) return null;
 
             if(genreChoice < 1 || genreChoice > genres.length) {
                 displayError("Invalid Genre Choice.");
@@ -165,9 +170,11 @@ public class ConsoleSearchView {
         for(int i = 0; i < languages.length;i++) {
             System.out.println(i + 1 + ". " + languages[i]);
         }
+        System.out.println("0. Back");
         
         while(true) {
             int languageChoice = inputReader.readInt("Enter Language Choice: ");
+            if(languageChoice == 0) return null;
 
             if(languageChoice < 1 || languageChoice > languages.length) {
                 displayError("Invalid Language Choice.");
@@ -183,9 +190,11 @@ public class ConsoleSearchView {
         for(int i = 0; i < ratings.length;i++) {
             System.out.println(i + 1 + ". " + ratings[i]);
         }
+        System.out.println("0. Back");
         
         while(true) {
             int ratingChoice = inputReader.readInt("Enter Rating Choice: ");
+            if(ratingChoice == 0) return null;
 
             if(ratingChoice < 1 || ratingChoice > ratings.length) {
                 displayError("Invalid Rating Choice.");
@@ -198,13 +207,11 @@ public class ConsoleSearchView {
     
     private Movie getMovieChoice(List<Movie> movies) {
         System.out.println("0. Back");
-        int movieChoice = inputReader.readInt("Enter Movie Choice: ");
-        
-        if(movieChoice == 0) {
-            return null;
-        }
         
         while(true) {
+            int movieChoice = inputReader.readInt("Enter Movie Choice: ");
+            if(movieChoice == 0) return null;
+            
             if(movieChoice < 1 || movieChoice > movies.size()) {
                 displayError("Invalid Movie Choice.");
                 continue;

@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.views.adminViews;
 
+import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageMovieController;
 import com.mycompany.movieticketbookingapplication.enums.Genre;
 import com.mycompany.movieticketbookingapplication.enums.Language;
 import com.mycompany.movieticketbookingapplication.enums.Rating;
@@ -10,7 +11,6 @@ import com.mycompany.movieticketbookingapplication.utils.ConsoleInputUtil;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageMovieController;
 import java.util.Arrays;
 import java.util.EnumSet;
 
@@ -95,6 +95,31 @@ public class ConsoleManageMovieView {
     
     private void handleInvalidChoice() {
         displayError("Invalid Choice");
+    }
+    
+    private Movie getMovie() {
+        List<Movie> movieList = movieController.getAllMovies();
+        if(movieList.isEmpty()) {
+            System.out.println("No Movie found.");
+            return null;
+        }
+        
+        for(int i = 0;i < movieList.size();i++) {
+            System.out.println(i + 1 + ". " + movieList.get(i).getTitle());
+        }
+        System.out.println("0. Back");
+        
+        while(true) {
+            int movieChoice = inputReader.readInt("Enter Movie Choice: ");
+            if(movieChoice == 0) return null;
+        
+            if(movieChoice < 1 || movieChoice > movieList.size()) {
+                displayError("Invalid Movie Choice.");
+                continue;
+            }
+
+            return movieList.get(movieChoice - 1);
+        }
     }
     
     private String getMovieTitle() {
@@ -184,48 +209,34 @@ public class ConsoleManageMovieView {
         System.out.println("2. Update Languages");
         System.out.println("3. Update Duration");
         System.out.println("4. Update Release Date");
+        System.out.println("0. Back");
                 
         return switch(inputReader.readInt("Enter Choice: ")) {
             case 1 -> MovieUpdateOption.UPDATE_GENRES;
             case 2 -> MovieUpdateOption.UPDATE_LANGUAGES;
             case 3 -> MovieUpdateOption.UPDATE_DURATION;
             case 4 -> MovieUpdateOption.UPDATE_RELEASE_DATE;
+            case 0 -> MovieUpdateOption.BACK;
             default -> MovieUpdateOption.INVALID;
         };
-    }
-    
-    private Movie getMovie() {
-        List<Movie> movieList = movieController.getAllMovies();
-        if(movieList.isEmpty()) {
-            System.out.println("No Movie found.");
-            return null;
-        }
-        
-        for(int i = 0;i < movieList.size();i++) {
-            System.out.println(i + 1 + ". " + movieList.get(i).getTitle());
-        }
-        
-        while(true) {
-            int movieChoice = inputReader.readInt("Enter Movie Choice: ");
-        
-            if(movieChoice < 1 || movieChoice > movieList.size()) {
-                displayError("Invalid Movie Choice.");
-                continue;
-            }
-
-            return movieList.get(movieChoice - 1);
-        }
     }
     
     private void handleUpdateGenres(Movie movie) {
         Genre[] existingGenres = movie.getGenres().toArray(Genre[]::new);
         Genre[] nonExistingGenres = Arrays.stream(Genre.values()).filter(g -> !movie.getGenres().contains(g)).toArray(Genre[]::new);
         
-        System.out.println("Add Genres: ");
-        Set<Genre> addGenres = getGenres(nonExistingGenres);
-                
-        System.out.println("Remove Genres: ");
-        Set<Genre> removeGenres = getGenres(existingGenres);
+        Set<Genre> addGenres = EnumSet.noneOf(Genre.class);
+        Set<Genre> removeGenres = EnumSet.noneOf(Genre.class);
+        
+        if(nonExistingGenres.length != 0) {
+            System.out.println("Add Genres: ");
+            addGenres = getGenres(nonExistingGenres);
+        }
+        
+        if(existingGenres.length != 0) {
+            System.out.println("Remove Genres: ");
+            removeGenres = getGenres(existingGenres);
+        }
         
         movieController.updateMovieGenres(movie, addGenres, removeGenres);
         
@@ -236,11 +247,18 @@ public class ConsoleManageMovieView {
         Language[] existingLanguages = movie.getLanguages().toArray(Language[]::new);
         Language[] nonExistingLanguages = Arrays.stream(Genre.values()).filter(g -> !movie.getGenres().contains(g)).toArray(Language[]::new);
         
-        System.out.println("Add Languages: ");
-        Set<Language> addLanguages = getLanguages(nonExistingLanguages);
-                
-        System.out.println("Remove Languages: ");
-        Set<Language> removeLanguages = getLanguages(existingLanguages);
+        Set<Language> addLanguages = EnumSet.noneOf(Language.class);
+        Set<Language> removeLanguages = EnumSet.noneOf(Language.class);
+        
+        if(nonExistingLanguages.length != 0) {
+            System.out.println("Add Languages: ");
+            addLanguages = getLanguages(nonExistingLanguages);
+        }
+        
+        if(existingLanguages.length != 0) {
+            System.out.println("Remove Languages: ");
+            removeLanguages = getLanguages(existingLanguages);
+        }
         
         movieController.updateMovieLanguages(movie, addLanguages, removeLanguages);
         

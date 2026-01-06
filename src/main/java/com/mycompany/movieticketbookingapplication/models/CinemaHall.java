@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class CinemaHall {
     private final AtomicLong seatIdCounter = new AtomicLong();
+    private int nextRowIndex = 0;
     
     private final String hallId;
     private final String name;
@@ -41,8 +42,45 @@ public class CinemaHall {
         totalSeats++;
     }
     
+    public void generateSeats(int numberOfRows, int numberOfSeatsPerRow, SeatType type) {
+        for (int r = 0; r < numberOfRows; r++) {
+            String rowLabel = getRow(nextRowIndex++);
+
+            for (int seatNo = 1; seatNo <= numberOfSeatsPerRow; seatNo++) {
+                seats.add(new Seat(
+                        hallId + "S" + seatIdCounter.incrementAndGet(),
+                        rowLabel,
+                        seatNo,
+                        type
+                ));
+                totalSeats++;
+            }
+        }
+    }
+    
     public void removeSeat(Seat seat) {
         this.seats.remove(seat);
         totalSeats--;
+    }
+    
+//    public List<String> getRows() {
+//        List<String> rows = new ArrayList<>();
+//        for(int i = 0;i < nextRowIndex;i++) {
+//            rows.add(getRow(i));
+//        }
+//        return rows;
+//    }
+    
+    private static String getRow(int index) {
+        StringBuilder row = new StringBuilder();
+        index++; 
+
+        while(index > 0) {
+            index--; 
+            row.insert(0, (char) ('A' + (index % 26)));
+            index /= 26;
+        }
+
+        return row.toString();
     }
 }

@@ -38,8 +38,10 @@ public class Theatre {
         return new ArrayList<>(halls);
     }
 
-    public void addHall(String cinemaHallName) {
-        this.halls.add(new CinemaHall(this.theatreId + "H" + hallIdCounter.incrementAndGet(), cinemaHallName));
+    public CinemaHall addHall(String cinemaHallName) {
+        CinemaHall cinemaHall = new CinemaHall(this.theatreId + "H" + hallIdCounter.incrementAndGet(), cinemaHallName);
+        this.halls.add(cinemaHall);
+        return cinemaHall;
     }
     
     public void removeHall(CinemaHall cinemaHall) {

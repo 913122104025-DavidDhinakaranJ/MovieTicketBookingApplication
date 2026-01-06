@@ -28,7 +28,8 @@ public abstract class User implements AuthenticatableUser {
         return this.password.equals(enteredPassword);
     }
     
-    public void setPassword(String newPassword) {
+    @Override
+    public void changePassword(String newPassword) {
         this.password = newPassword;
     }
     

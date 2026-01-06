@@ -8,6 +8,7 @@ import com.mycompany.movieticketbookingapplication.models.users.Customer;
 import com.mycompany.movieticketbookingapplication.repositories.IBookingRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class ShowController implements IShowController {
     private final Show show;
@@ -34,10 +35,14 @@ public class ShowController implements IShowController {
     }
 
     @Override
-    public Booking createBooking(Customer customer, List<ShowSeat> showSeats) {
-        Booking booking = new Booking(customer, show, showSeats);
-        bookingRepository.saveBooking(booking);
-        customer.addBooking(booking);
+    public Booking createBooking(Customer customer, Set<ShowSeat> selectedSeats) {
+        Booking booking = new Booking(customer, show, (List<ShowSeat>) selectedSeats);
         return booking;
+    }
+
+    @Override
+    public void confirmBooking(Booking booking) {
+        booking.updateStatusToConfirmed();
+        bookingRepository.saveBooking(booking);
     }
 }

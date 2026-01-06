@@ -1,6 +1,8 @@
 package com.mycompany.movieticketbookingapplication.views.customerViews;
 
-import com.mycompany.authlib.util.ConsoleAuthInputUtil;
+import com.mycompany.authlib.controller.AuthController;
+import com.mycompany.authlib.views.ConsoleAuthView;
+import com.mycompany.authlib.views.IAuthView;
 import com.mycompany.movieticketbookingapplication.contexts.ApplicationContext;
 import com.mycompany.movieticketbookingapplication.controllers.implementations.customerControllersImplementations.BookingController;
 import com.mycompany.movieticketbookingapplication.controllers.implementations.customerControllersImplementations.SearchController;
@@ -52,12 +54,12 @@ public class ConsoleCustomerView {
             default -> CustomerMenuOption.INVALID;
         };
     }
-
+    
     private void handleSearchMovie() {
         ConsoleSearchView searchView = new ConsoleSearchView(new SearchController(appContext.getMovieRepository()));
         searchView.runSearchView();
     }
-
+    
     private void handleViewBookHistory() {
         List<Booking> bookings = customerController.getBookingHistory();
         if(bookings.isEmpty()) {
@@ -70,23 +72,19 @@ public class ConsoleCustomerView {
     }
     
     private void handleChangePassword() {
-        ConsoleAuthInputUtil authInputReader = new ConsoleAuthInputUtil();
-        String newPassword = authInputReader.getPassword();
-        
-        customerController.changePassword(newPassword);
-        System.out.println("Password Changed.");
+        IAuthView authView = new ConsoleAuthView(new AuthController(appContext.getUserRepository(), appContext.getCustomerFactory()));
+        authView.changePassword(appContext.getSessionContext().getCurrentUser().get());
     }
-
+    
     private void handleLogout() {
         login = false;
         System.out.println("Logged out Successfully.");
     }
-
+    
     private void handleInvalidChoice() {
         displayError("Invalid Choice");
     }
     
-
     private void displayError(String message) {
         System.out.println("Error: " + message);
     }
@@ -95,14 +93,14 @@ public class ConsoleCustomerView {
         int i = 1;
         for(Booking booking : bookings) {
             Show show = booking.getShow();
-            System.out.println(i + ". Date:" + booking.getBookingDate().toString()
+            System.out.println(i + ". Date:" + inputReader.formatDateTime(booking.getBookingDate())
                     + "\tMovie: " + show.getMovie().getTitle()
                     + "\tTheatre: " + show.getTheatre().getName()
                     + "\tStatus: " + booking.getBookingStatus());
             i++;
         }
     }
-
+    
     private void handleBookingSelection(List<Booking> bookings) {
         Booking booking = getBookingChoice(bookings);
         if(booking == null) return;
@@ -124,7 +122,7 @@ public class ConsoleCustomerView {
                 displayError("Invalid Booking Choice.");
                 continue;
             }
-
+            
             return bookings.get(bookingChoice - 1);
         }
     }

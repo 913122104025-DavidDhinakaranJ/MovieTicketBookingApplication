@@ -46,18 +46,20 @@ public class ConsoleManageCustomerView {
         List<String> nonBlockedCustomers = manageCustomerController.getNonBlockedCustomers();
         
         if(nonBlockedCustomers.isEmpty()) {
-            System.out.println("No non blocked customer exist.");
+            System.out.println("No non-blocked customer exist.");
             return;
         }
         
         for(int i = 0; i < nonBlockedCustomers.size();i++) {
             System.out.println(i + 1 + ". " + nonBlockedCustomers.get(i));
         }
+        System.out.println("0. Back");
         
         while(true) {
             int blockChoice = inputReader.readInt("Enter Choice to block customer: ");
+            if(blockChoice == 0) return;
 
-            if(blockChoice <= 0 || blockChoice > nonBlockedCustomers.size()) {
+            if(blockChoice < 1 || blockChoice > nonBlockedCustomers.size()) {
                 displayError("Invalid Customer Choice");
                 continue;
             }
@@ -78,11 +80,13 @@ public class ConsoleManageCustomerView {
         for(int i = 0; i < blockedCustomers.size();i++) {
             System.out.println(i + 1 + ". " + blockedCustomers.get(i));
         }
+        System.out.println("0. Back");
         
         while(true) {
             int unblockChoice = inputReader.readInt("Enter Choice to unblock customer: ");
+            if(unblockChoice == 0) return;
 
-            if(unblockChoice <= 0 || unblockChoice > blockedCustomers.size()) {
+            if(unblockChoice < 1 || unblockChoice > blockedCustomers.size()) {
                 displayError("Invalid Customer Choice");
                 continue;
             }

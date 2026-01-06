@@ -76,6 +76,11 @@ public class ConsoleMovieView {
     }
     
     private void handleShowListSelection(List<Show> shows) {
+        if(shows.isEmpty()) {
+            System.out.println("No Shows Available");
+            return;
+        }
+        
         Show show = getShowChoice(shows);
         if(show == null) return;
         

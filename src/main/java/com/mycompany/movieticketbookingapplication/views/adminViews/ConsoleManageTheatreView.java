@@ -52,7 +52,9 @@ public class ConsoleManageTheatreView {
         String theatreName = getTheatreName();
         String theatreAddress = getTheatreAddress();
         
-        theatreController.addTheatre(theatreName, theatreAddress);
+        Theatre theatre = theatreController.addTheatre(theatreName, theatreAddress);
+        handleManageCinemaHall(theatre);
+        
         System.out.println("Theatre added successfully.");
     }
 
@@ -80,6 +82,13 @@ public class ConsoleManageTheatreView {
         displayError("Invalid Choice");
     }
     
+    private void handleManageCinemaHall(Theatre theatre) {
+        while(inputReader.readBoolean("Do you want to continue to manage cinema halls?")) {
+            ConsoleManageCinemaHallView cinemaHallView = new ConsoleManageCinemaHallView(new ManageCinemaHallController(theatre));
+            cinemaHallView.runCinemaHallView();
+        }
+    }
+    
     private String getTheatreName() {
         return inputReader.readString("Enter Theatre Name: ");
     }
@@ -98,9 +107,11 @@ public class ConsoleManageTheatreView {
         for(int i = 0;i < theatreList.size();i++) {
             System.out.println(i + 1 + ". " + theatreList.get(i).getName());
         }
+        System.out.println("0. Back");
         
         while(true) {
             int theatreChoice = inputReader.readInt("Enter Theatre Choice: ");
+            if(theatreChoice == 0) return null;
 
             if(theatreChoice < 1 || theatreChoice > theatreList.size()) {
                 displayError("Invalid Theatre Choice.");

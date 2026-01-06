@@ -1,11 +1,11 @@
 package com.mycompany.movieticketbookingapplication.views.adminViews;
 
+import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageSeatController;
 import com.mycompany.movieticketbookingapplication.enums.SeatType;
 import com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuOptions.AdminOperationsOption;
 import com.mycompany.movieticketbookingapplication.models.Seat;
 import com.mycompany.movieticketbookingapplication.utils.ConsoleInputUtil;
 import java.util.List;
-import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageSeatController;
 
 public class ConsoleManageSeatView {
     private final ConsoleInputUtil inputReader;
@@ -24,7 +24,7 @@ public class ConsoleManageSeatView {
         while(running) {
             AdminOperationsOption choice = getAdminOperationsOption();
             switch(choice) {
-                case ADD -> handleAddSeat();
+                case ADD -> handleAddSeats();
                 case UPDATE -> handleUpdateSeat();
                 case DELETE -> handleDeleteSeat();
                 case EXIT -> handleExit();
@@ -34,9 +34,9 @@ public class ConsoleManageSeatView {
     }
     
     private AdminOperationsOption getAdminOperationsOption() {
-        System.out.println("1. Add Seat");
-        System.out.println("2. Update Seat Type");
-        System.out.println("3. Remove Seat");
+        System.out.println("1. Add Seats");
+        System.out.println("2. Update Seats Type");
+        System.out.println("3. Remove Seats");
         System.out.println("0. Exit");
         
         return switch(inputReader.readInt("Enter choice: ")) {
@@ -48,13 +48,13 @@ public class ConsoleManageSeatView {
         };
     }
 
-    private void handleAddSeat() {
-        String row = getRow();
-        int seatNumber = getSeatNumber();
+    private void handleAddSeats() {
         SeatType type = getSeatType();
+        int numberOfRows = getNumberOfRows();
+        int numberOfSeatsPerRow = getNumberOfSeatsPerRow();
+        seatController.addSeats(numberOfRows, numberOfSeatsPerRow, type);
         
-        seatController.addSeat(row, seatNumber, type);
-        System.out.println("Seat added successfully.");
+        System.out.println("Seats added successfully.");
     }
 
     private void handleUpdateSeat() {
@@ -83,12 +83,12 @@ public class ConsoleManageSeatView {
         displayError("Invalid Choice");
     }
 
-    private String getRow() {
-        return inputReader.readString("Enter Row: ");
+    private int getNumberOfRows() {
+        return inputReader.readPositiveInt("Enter Number Of Rows: ");
     }
 
-    private int getSeatNumber() {
-        return inputReader.readInt("Enter Seat Number: ");
+    private int getNumberOfSeatsPerRow() {
+        return inputReader.readInt("Enter Number of Seats Per Row: ");
     }
     
     private Seat getSeat() {
@@ -104,16 +104,18 @@ public class ConsoleManageSeatView {
                     + seat.getSeatNumber() + "-"
                     + seat.getSeatType());
         }
+        System.out.println("0. Exit");
         
         while(true) {
-            int cinemaHallChoice = inputReader.readInt("Enter Seat Choice: ");
+            int seatChoice = inputReader.readInt("Enter Seat Choice: ");
+            if(seatChoice == 0) return null;
 
-            if(cinemaHallChoice < 1 || cinemaHallChoice > seatList.size()) {
+            if(seatChoice < 1 || seatChoice > seatList.size()) {
                 displayError("Invalid Seat Choice.");
                 continue;
             }
 
-            return seatList.get(cinemaHallChoice - 1);
+            return seatList.get(seatChoice - 1);
         }
     }
 

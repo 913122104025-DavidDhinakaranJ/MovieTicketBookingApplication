@@ -10,6 +10,7 @@ import com.mycompany.movieticketbookingapplication.repositories.IShowRepository;
 import com.mycompany.movieticketbookingapplication.repositories.ITheatreRepository;
 import com.mycompany.movieticketbookingapplication.repositories.IUserRepository;
 import com.mycompany.movieticketbookingapplication.repositories.InMemoryRepository;
+import com.mycompany.movieticketbookingapplication.utils.SampleDataLoader;
 
 public class ApplicationContext {
     
@@ -42,6 +43,9 @@ public class ApplicationContext {
         
         superAdmin = new Admin("superAdmin", "superAdmin@1234", true);
         userRepository.saveUser(superAdmin);
+        
+        SampleDataLoader loader = new SampleDataLoader(movieRepository, theatreRepository, showRepository);
+        loader.loadData();
     }
     
     public static ApplicationContext getInstance() {

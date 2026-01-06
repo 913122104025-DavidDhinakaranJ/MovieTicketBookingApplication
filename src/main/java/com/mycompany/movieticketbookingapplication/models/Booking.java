@@ -80,4 +80,8 @@ public class Booking {
     public Payment getPayment() {
         return payment;
     }
+    
+    public void addBookingToCustomer() {
+        customer.addBooking(this);
+    }
 }

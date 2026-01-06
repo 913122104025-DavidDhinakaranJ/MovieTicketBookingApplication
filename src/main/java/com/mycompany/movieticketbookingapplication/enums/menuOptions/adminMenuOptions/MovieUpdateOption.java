@@ -5,5 +5,6 @@ public enum MovieUpdateOption {
     UPDATE_LANGUAGES,
     UPDATE_DURATION,
     UPDATE_RELEASE_DATE,
+    BACK,
     INVALID;
 }
