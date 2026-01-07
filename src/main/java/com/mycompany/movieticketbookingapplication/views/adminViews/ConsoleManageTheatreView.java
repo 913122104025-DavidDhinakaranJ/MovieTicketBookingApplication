@@ -94,11 +94,11 @@ public class ConsoleManageTheatreView {
     }
     
     private String getTheatreName() {
-        return inputReader.readString("Enter Theatre Name: ");
+        return inputReader.readString("Enter Theatre Name: ", false);
     }
     
     private String getTheatreAddress() {
-        return inputReader.readString("Enter Theatre Address: ");
+        return inputReader.readString("Enter Theatre Address: ", false);
     }
     
     private Theatre getTheatre() {

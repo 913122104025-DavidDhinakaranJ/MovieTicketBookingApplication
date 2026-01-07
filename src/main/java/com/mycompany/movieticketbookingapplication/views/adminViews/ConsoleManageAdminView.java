@@ -172,7 +172,7 @@ public class ConsoleManageAdminView {
             System.out.println(i + 1 + ". " + privileges.get(i));
         }
         
-        String privilegesChoice = inputReader.readString("Enter Privilege Choices (Space Seperated): ");
+        String privilegesChoice = inputReader.readString("Enter Privilege Choices (Space Seperated): ", true);
         if(privilegesChoice.isBlank()) return EnumSet.noneOf(Privilege.class);
         
         Set<Privilege> privilegeList = EnumSet.noneOf(Privilege.class);

@@ -128,7 +128,7 @@ public class ConsoleManageMovieView {
     }
     
     private String getMovieTitle() {
-        return inputReader.readString("Enter Movie Title: ");
+        return inputReader.readString("Enter Movie Title: ", false);
     }
     
     private Set<Genre> getGenres(Genre[] genres) {
@@ -136,7 +136,7 @@ public class ConsoleManageMovieView {
             System.out.println(i + 1 + ". " + genres[i]);
         }
         
-        String genresChoice = inputReader.readString("Enter Genre Choices (Space Seperated): ");
+        String genresChoice = inputReader.readString("Enter Genre Choices (Space Seperated): ", true);
         if(genresChoice.isBlank()) return EnumSet.noneOf(Genre.class);
         
         Set<Genre> genreList = EnumSet.noneOf(Genre.class);
@@ -162,7 +162,7 @@ public class ConsoleManageMovieView {
             System.out.println(i + 1 + ". " + languages[i]);
         }
         
-        String languagesChoice = inputReader.readString("Enter Langauge Choices (Space Seperated): ");
+        String languagesChoice = inputReader.readString("Enter Langauge Choices (Space Seperated): ", true);
         if(languagesChoice.isBlank()) return EnumSet.noneOf(Language.class);
         
         Set<Language> languageList = EnumSet.noneOf(Language.class);

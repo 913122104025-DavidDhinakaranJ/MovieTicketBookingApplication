@@ -126,7 +126,7 @@ public class ConsoleSearchView {
     }
     
     private String getTitleChoice() {
-        String input = inputReader.readString("Enter Title (press ENTER to go back): ");
+        String input = inputReader.readString("Enter Title (press ENTER to go back): ", true);
         if(input.isBlank()) return null;
         return input;
     }

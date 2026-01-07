@@ -93,7 +93,7 @@ public class ConsoleManageCinemaHallView {
     }
     
     private String getCinemaHallName() {
-        return inputReader.readString("Enter Cinema Hall Name: ");
+        return inputReader.readString("Enter Cinema Hall Name: ", false);
     }
     
     private CinemaHall getCinemaHall() {

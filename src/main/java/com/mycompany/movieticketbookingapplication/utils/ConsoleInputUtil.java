@@ -35,9 +35,16 @@ public class ConsoleInputUtil {
         }
     }
     
-    public String readString(String prompt) {
-        System.out.print(prompt);
-        return scanner.nextLine().trim();
+    public String readString(String prompt, boolean isEmptyInputAllowed) {
+        while(true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if(!isEmptyInputAllowed && input.isBlank()) {
+                displayError("Empty Input Not Allowed.");
+                continue;
+            }
+            return input;
+         }
     }
     
     public LocalDate readDate(String prompt) {
