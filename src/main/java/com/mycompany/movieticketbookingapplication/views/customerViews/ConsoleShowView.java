@@ -10,6 +10,7 @@ import com.mycompany.movieticketbookingapplication.models.Show;
 import com.mycompany.movieticketbookingapplication.models.ShowSeat;
 import com.mycompany.movieticketbookingapplication.models.users.Customer;
 import com.mycompany.movieticketbookingapplication.utils.ConsoleInputUtil;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -123,7 +124,7 @@ public class ConsoleShowView {
             i++;
         }
         
-        Booking booking = showController.createBooking(customer, selectedSeats);
+        Booking booking = showController.createBooking(customer, new ArrayList<>(selectedSeats));
         ConsolePaymentView paymentView = new ConsolePaymentView(booking.getPayment());
         
         if(paymentView.handlePayment(booking.getTotalPrice())) {

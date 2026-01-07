@@ -58,7 +58,7 @@ public class ConsoleBookingView {
         }
 
         Show show = booking.getShow();
-        System.out.println("Date:" + booking.getBookingDate().toString());
+        System.out.println("Date:" + inputReader.formatDateTime(booking.getBookingDate()));
         System.out.println("Movie: " + show.getMovie().getTitle());
         System.out.println("Theatre: " + show.getTheatre().getName());
         System.out.println("Cinema Hall: " + show.getCinemaHall().getName());
