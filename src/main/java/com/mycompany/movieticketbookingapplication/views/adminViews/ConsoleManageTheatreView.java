@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.views.adminViews;
 
+import com.mycompany.movieticketbookingapplication.Exceptions.TheatreNameConflictException;
 import com.mycompany.movieticketbookingapplication.controllers.implementations.adminControllersImplementations.ManageCinemaHallController;
 import com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuOptions.AdminOperationsOption;
 import com.mycompany.movieticketbookingapplication.models.Theatre;
@@ -52,10 +53,13 @@ public class ConsoleManageTheatreView {
         String theatreName = getTheatreName();
         String theatreAddress = getTheatreAddress();
         
-        Theatre theatre = theatreController.addTheatre(theatreName, theatreAddress);
-        handleManageCinemaHall(theatre);
-        
-        System.out.println("Theatre added successfully.");
+        try {
+            Theatre theatre = theatreController.addTheatre(theatreName, theatreAddress);
+            handleManageCinemaHall(theatre);
+            System.out.println("Theatre added successfully.");
+        } catch (TheatreNameConflictException ex) {
+            displayError("Theatre with given name already exist.");
+        }
     }
 
     private void handleUpdateTheatre() {

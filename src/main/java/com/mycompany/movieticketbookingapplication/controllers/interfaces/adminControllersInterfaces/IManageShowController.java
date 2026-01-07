@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces;
 
+import com.mycompany.movieticketbookingapplication.Exceptions.ShowTimeConflictException;
 import com.mycompany.movieticketbookingapplication.models.CinemaHall;
 import com.mycompany.movieticketbookingapplication.models.Movie;
 import com.mycompany.movieticketbookingapplication.models.Show;
@@ -8,8 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IManageShowController {
-    void addShow(Movie movie, CinemaHall cinemaHall, Theatre theatre, LocalDateTime startTime, LocalDateTime endTime, double basePrice);
-    void updateShow(Show show, LocalDateTime startTime, LocalDateTime endTime);
+    void addShow(Movie movie, CinemaHall cinemaHall, Theatre theatre, LocalDateTime startTime, LocalDateTime endTime, double basePrice) throws ShowTimeConflictException;
+    void updateShow(Show show, LocalDateTime startTime, LocalDateTime endTime) throws ShowTimeConflictException;
     void deleteShow(Show show);
     
     List<Show> getAllShows();

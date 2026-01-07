@@ -3,6 +3,7 @@ public enum MainMenuOption {
     REGISTER,
     LOGIN,
     SEARCH,
+    BROWSE,
     EXIT,
     INVALID;
 }

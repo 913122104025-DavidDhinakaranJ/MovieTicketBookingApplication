@@ -32,6 +32,7 @@ public class ConsoleCustomerView {
             CustomerMenuOption choice = getCustomerMenuOption();
             switch(choice) {
                 case SEARCH_MOVIE -> handleSearchMovie();
+                case BROWSE_MOVIE -> handleBrowseMovie();
                 case VIEW_BOOKING_HISTORY -> handleViewBookHistory();
                 case CHANGE_PASSWORD -> handleChangePassword();
                 case LOGOUT -> handleLogout();
@@ -42,14 +43,16 @@ public class ConsoleCustomerView {
     
     private CustomerMenuOption getCustomerMenuOption() {
         System.out.println("1. Search Movie");
+        System.out.println("2. Browse Movie");
         System.out.println("2. View Booking History");
         System.out.println("3. Change Password");
         System.out.println("0. Logout");
         
         return switch(inputReader.readInt("Enter choice: ")) {
             case 1 -> CustomerMenuOption.SEARCH_MOVIE;
-            case 2 -> CustomerMenuOption.VIEW_BOOKING_HISTORY;
-            case 3 -> CustomerMenuOption.CHANGE_PASSWORD;
+            case 2 -> CustomerMenuOption.BROWSE_MOVIE;
+            case 3 -> CustomerMenuOption.VIEW_BOOKING_HISTORY;
+            case 4 -> CustomerMenuOption.CHANGE_PASSWORD;
             case 0 -> CustomerMenuOption.LOGOUT;
             default -> CustomerMenuOption.INVALID;
         };
@@ -58,6 +61,11 @@ public class ConsoleCustomerView {
     private void handleSearchMovie() {
         ConsoleSearchView searchView = new ConsoleSearchView(new SearchController(appContext.getMovieRepository()));
         searchView.runSearchView();
+    }
+    
+    private void handleBrowseMovie() {
+        ConsoleBrowseView browseView = new ConsoleBrowseView(appContext.getMovieRepository().getAllMovies());
+        browseView.runBrowseView();
     }
     
     private void handleViewBookHistory() {

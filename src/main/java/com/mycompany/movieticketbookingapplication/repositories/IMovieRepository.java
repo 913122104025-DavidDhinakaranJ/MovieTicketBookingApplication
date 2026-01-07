@@ -12,7 +12,9 @@ public interface IMovieRepository {
     List<Movie> getMovies(Genre genre);
     List<Movie> getMovies(Language language);
     List<Movie> getMovies(Rating rating);
-
+    
+    boolean isMovieAlreadyExist(String title);
+    
     void addMovie(Movie movie);
 
     void deleteMovie(Movie movie);

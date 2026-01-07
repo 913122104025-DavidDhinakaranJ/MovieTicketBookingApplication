@@ -47,4 +47,13 @@ public class Theatre {
     public void removeHall(CinemaHall cinemaHall) {
         halls.remove(cinemaHall);
     }
+    
+    public boolean isCinemaHallAlreadyExist(String cinamaHallName) {
+        for(CinemaHall cinamaHall : halls) {
+            if(cinamaHall.getName().equalsIgnoreCase(cinamaHallName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -1,7 +1,6 @@
 package com.mycompany.movieticketbookingapplication.views.customerViews;
 
 import com.mycompany.movieticketbookingapplication.contexts.ApplicationContext;
-import com.mycompany.movieticketbookingapplication.controllers.implementations.customerControllersImplementations.MovieController;
 import com.mycompany.movieticketbookingapplication.controllers.interfaces.customerControllersInterfaces.ISearchController;
 import com.mycompany.movieticketbookingapplication.enums.Genre;
 import com.mycompany.movieticketbookingapplication.enums.Language;
@@ -67,8 +66,7 @@ public class ConsoleSearchView {
             return;
         }
         
-        displayMovies(movies);
-        handleMoviesListSelection(movies);
+        handleMovieBrowse(movies);
     }
 
     private void handleSearchByGenre() {
@@ -82,8 +80,7 @@ public class ConsoleSearchView {
             return;
         }
         
-        displayMovies(movies);
-        handleMoviesListSelection(movies);
+        handleMovieBrowse(movies);
     }
 
     private void handleSearchByLanguage() {
@@ -97,8 +94,7 @@ public class ConsoleSearchView {
             return;
         }
         
-        displayMovies(movies);
-        handleMoviesListSelection(movies); 
+        handleMovieBrowse(movies);
     }
 
     private void handleSearchByRating() {
@@ -112,8 +108,7 @@ public class ConsoleSearchView {
             return;
         }
         
-        displayMovies(movies);
-        handleMoviesListSelection(movies);
+        handleMovieBrowse(movies);
     }
 
     private void handleCloseSearch() {
@@ -125,18 +120,9 @@ public class ConsoleSearchView {
         displayError("Invalid Choice");
     }
     
-    private void handleMoviesListSelection(List<Movie> movies) {
-        Movie movie = getMovieChoice(movies);
-        if(movie == null) return;
-        
-        ConsoleMovieView movieView = new ConsoleMovieView(new MovieController(movie, appContext.getShowRepository()));
-        movieView.runMovieView();
-    }
-    
-    private void displayMovies(List<Movie> movies) {
-        for(int i = 0;i < movies.size();i++) {
-            System.out.println(i + 1 + ". " + movies.get(i).getTitle());
-        }
+    private void handleMovieBrowse(List<Movie> movies) {
+        ConsoleBrowseView browseView = new ConsoleBrowseView(movies);
+        browseView.runBrowseView();
     }
     
     private String getTitleChoice() {
@@ -202,22 +188,6 @@ public class ConsoleSearchView {
             }
 
             return ratings[ratingChoice - 1];
-        }
-    }
-    
-    private Movie getMovieChoice(List<Movie> movies) {
-        System.out.println("0. Back");
-        
-        while(true) {
-            int movieChoice = inputReader.readInt("Enter Movie Choice: ");
-            if(movieChoice == 0) return null;
-            
-            if(movieChoice < 1 || movieChoice > movies.size()) {
-                displayError("Invalid Movie Choice.");
-                continue;
-            }
-
-            return movies.get(movieChoice - 1);
         }
     }
     

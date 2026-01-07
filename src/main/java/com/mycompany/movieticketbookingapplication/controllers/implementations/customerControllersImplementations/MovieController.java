@@ -48,6 +48,6 @@ public class MovieController implements IMovieController {
 
     @Override
     public List<Show> getShows() {
-        return showRepository.getShows(movie);
+        return showRepository.getFutureShows(movie);
     }
 }

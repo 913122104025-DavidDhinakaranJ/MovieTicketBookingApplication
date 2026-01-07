@@ -1,5 +1,7 @@
 package com.mycompany.movieticketbookingapplication.controllers.implementations.adminControllersImplementations;
 
+import com.mycompany.movieticketbookingapplication.Exceptions.ShowTimeConflictException;
+import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageShowController;
 import com.mycompany.movieticketbookingapplication.models.CinemaHall;
 import com.mycompany.movieticketbookingapplication.models.Movie;
 import com.mycompany.movieticketbookingapplication.models.Show;
@@ -9,7 +11,6 @@ import com.mycompany.movieticketbookingapplication.repositories.IShowRepository;
 import com.mycompany.movieticketbookingapplication.repositories.ITheatreRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageShowController;
 
 public class ManageShowController implements IManageShowController {
     private final IShowRepository showRepository;
@@ -23,7 +24,10 @@ public class ManageShowController implements IManageShowController {
     }
 
     @Override
-    public void addShow(Movie movie, CinemaHall cinemaHall, Theatre theatre, LocalDateTime startTime, LocalDateTime endTime, double basePrice) {
+    public void addShow(Movie movie, CinemaHall cinemaHall, Theatre theatre, LocalDateTime startTime, LocalDateTime endTime, double basePrice) throws ShowTimeConflictException {
+        if(showRepository.isShowTimeConflicting(theatre, cinemaHall, startTime, endTime)) {
+            throw new ShowTimeConflictException();
+        }
         Show show = new Show(movie, cinemaHall, theatre, basePrice);
         
         show.setStartTime(startTime);
@@ -33,9 +37,18 @@ public class ManageShowController implements IManageShowController {
     }
     
     @Override
-    public void updateShow(Show show, LocalDateTime startTime, LocalDateTime endTime) {
+    public void updateShow(Show show, LocalDateTime startTime, LocalDateTime endTime) throws ShowTimeConflictException {
+        showRepository.deleteShow(show);
+        
+        if(showRepository.isShowTimeConflicting(show.getTheatre(), show.getCinemaHall(), startTime, endTime)) {
+            showRepository.addShow(show);
+            throw new ShowTimeConflictException();
+        }
+        
         show.setStartTime(startTime);
         show.setEndTime(endTime);
+        
+        showRepository.addShow(show);
     }
     
     @Override

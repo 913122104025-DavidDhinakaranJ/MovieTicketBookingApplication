@@ -6,12 +6,14 @@ import com.mycompany.movieticketbookingapplication.enums.Language;
 import com.mycompany.movieticketbookingapplication.enums.Rating;
 import com.mycompany.movieticketbookingapplication.enums.Role;
 import com.mycompany.movieticketbookingapplication.models.Booking;
+import com.mycompany.movieticketbookingapplication.models.CinemaHall;
 import com.mycompany.movieticketbookingapplication.models.Movie;
 import com.mycompany.movieticketbookingapplication.models.Show;
 import com.mycompany.movieticketbookingapplication.models.Theatre;
 import com.mycompany.movieticketbookingapplication.models.users.Admin;
 import com.mycompany.movieticketbookingapplication.models.users.Customer;
 import com.mycompany.movieticketbookingapplication.models.users.User;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +144,17 @@ public class InMemoryRepository implements IBookingRepository, IUserRepository, 
         }
         return showList;
     }
+    
+    @Override
+    public List<Show> getFutureShows(Movie movie) {
+        List<Show> showList = new ArrayList<>();
+        for(Show show : getShows(movie)) {
+            if(show.getStartTime().isAfter(LocalDateTime.now())) {
+                showList.add(show);
+            }
+        }
+        return showList;
+    }
 
     @Override
     public List<Show> getAllShows() {
@@ -237,6 +250,38 @@ public class InMemoryRepository implements IBookingRepository, IUserRepository, 
         }
         
         return admins;
+    }
+
+    @Override
+    public boolean isShowTimeConflicting(Theatre theatre, CinemaHall cinemaHall, LocalDateTime startTime, LocalDateTime endTime) {
+        for(Show show : shows) {
+            if(show.getTheatre().equals(theatre) && show.getCinemaHall().equals(cinemaHall)) {
+                if(startTime.isBefore(show.getEndTime()) && show.getStartTime().isBefore(endTime)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isMovieAlreadyExist(String title) {
+        for(Movie movie : movies) {
+            if(movie.getTitle().equalsIgnoreCase(title)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isTheatreAlreadyExist(String theatreName) {
+        for(Theatre theatre : theatres) {
+            if(theatre.getName().equalsIgnoreCase(theatreName)) {
+                return true;
+            }
+        }
+        return false;
     }
     
 }

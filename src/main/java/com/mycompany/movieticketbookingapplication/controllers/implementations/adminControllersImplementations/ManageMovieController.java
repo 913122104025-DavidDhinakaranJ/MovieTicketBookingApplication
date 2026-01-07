@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.controllers.implementations.adminControllersImplementations;
 
+import com.mycompany.movieticketbookingapplication.Exceptions.MovieNameConflictException;
 import com.mycompany.movieticketbookingapplication.enums.Genre;
 import com.mycompany.movieticketbookingapplication.enums.Language;
 import com.mycompany.movieticketbookingapplication.enums.Rating;
@@ -18,7 +19,11 @@ public class ManageMovieController implements IManageMovieController {
     }
     
     @Override
-    public void addMovie(String title, Set<Genre> genres, Set<Language> languages, Rating rating, int duration, LocalDate date) {
+    public void addMovie(String title, Set<Genre> genres, Set<Language> languages, Rating rating, int duration, LocalDate date) throws MovieNameConflictException {
+        if(movieRepository.isMovieAlreadyExist(title)) {
+            throw new MovieNameConflictException();
+        }
+        
         Movie movie = new Movie(title, rating);
         
         for(Genre genre : genres) {

@@ -58,7 +58,7 @@ public class ConsoleInputUtil {
     public LocalDateTime readDateTime(String prompt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
-        while (true) {
+        while(true) {
             System.out.print(prompt + " (dd-MM-yyyy HH:mm): ");
             String input = scanner.nextLine().trim();
 
@@ -84,11 +84,11 @@ public class ConsoleInputUtil {
     }
     
     public boolean readBoolean(String prompt) {
-        while (true) {
+        while(true) {
             System.out.print(prompt + " (yes/no): ");
-            String input = scanner.next().trim().toLowerCase();
+            String input = scanner.nextLine().trim().toLowerCase();
 
-            switch (input) {
+            switch(input) {
                 case "yes" -> {
                     return true;
                 }

@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.views.adminViews;
 
+import com.mycompany.movieticketbookingapplication.Exceptions.ShowTimeConflictException;
 import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageShowController;
 import com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuOptions.AdminOperationsOption;
 import com.mycompany.movieticketbookingapplication.models.CinemaHall;
@@ -61,13 +62,17 @@ public class ConsoleManageShowView {
         Movie movie = getMovie();
         if(movie == null) return;
         
-        LocalDateTime[] showTime = getShowTime();
-        
         double basePrice = getBasePrice();
         
-        showController.addShow(movie, cinemaHall, theatre, showTime[0], showTime[1], basePrice);
-        
-        System.out.println("Show added successfully.");
+        do {
+            LocalDateTime[] showTime = getShowTime();
+            try {
+                showController.addShow(movie, cinemaHall, theatre, showTime[0], showTime[1], basePrice);
+                System.out.println("Show added successfully.");
+            } catch (ShowTimeConflictException e) {
+                displayError("Show already exist at the given time slot.");
+            }
+        } while(inputReader.readBoolean("Do you want to continue to add shows?"));
     }
 
     private void handleUpdateShow() {
@@ -76,8 +81,12 @@ public class ConsoleManageShowView {
         
         LocalDateTime[] showTime = getShowTime();
         
-        showController.updateShow(show, showTime[0], showTime[1]);
-        System.out.println("Show updated successfully.");
+        try {
+            showController.updateShow(show, showTime[0], showTime[1]);
+            System.out.println("Show updated successfully.");
+        } catch (ShowTimeConflictException e) {
+            displayError("Show already exist at the given time slot.");
+        }
     }
 
     private void handleDeleteShow() {

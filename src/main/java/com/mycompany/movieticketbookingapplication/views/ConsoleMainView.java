@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.views;
 
+import com.mycompany.movieticketbookingapplication.views.customerViews.ConsoleSearchView;
 import com.mycompany.authlib.controller.AuthController;
 import com.mycompany.authlib.views.ConsoleAuthView;
 import com.mycompany.authlib.views.IAuthView;
@@ -11,8 +12,8 @@ import com.mycompany.movieticketbookingapplication.models.users.Customer;
 import com.mycompany.movieticketbookingapplication.models.users.User;
 import com.mycompany.movieticketbookingapplication.utils.ConsoleInputUtil;
 import com.mycompany.movieticketbookingapplication.views.adminViews.ConsoleAdminView;
+import com.mycompany.movieticketbookingapplication.views.customerViews.ConsoleBrowseView;
 import com.mycompany.movieticketbookingapplication.views.customerViews.ConsoleCustomerView;
-import com.mycompany.movieticketbookingapplication.views.customerViews.ConsoleSearchView;
 
 public class ConsoleMainView {
     private final ConsoleInputUtil inputReader;
@@ -33,6 +34,7 @@ public class ConsoleMainView {
                 case REGISTER -> handleRegistration();
                 case LOGIN -> handleLogin();
                 case SEARCH -> handleSearch();
+                case BROWSE -> handleBrowse();
                 case EXIT -> stopMainView();
                 case INVALID -> handleInvalidChoice();
             }
@@ -43,12 +45,14 @@ public class ConsoleMainView {
         System.out.println("1. New User Registration");
         System.out.println("2. Log in");
         System.out.println("3. Search Movie");
+        System.out.println("4. Browse Movies");
         System.out.println("0. Exit");
         
         return switch(inputReader.readInt("Enter choice: ")) {
             case 1 -> MainMenuOption.REGISTER;
             case 2 -> MainMenuOption.LOGIN;
             case 3 -> MainMenuOption.SEARCH;
+            case 4 -> MainMenuOption.BROWSE;
             case 0 -> MainMenuOption.EXIT;
             default -> MainMenuOption.INVALID;
         };
@@ -71,6 +75,11 @@ public class ConsoleMainView {
     private void handleSearch() {
         ConsoleSearchView searchView = new ConsoleSearchView(new SearchController(appContext.getMovieRepository()));
         searchView.runSearchView();
+    }
+    
+    private void handleBrowse() {
+        ConsoleBrowseView browseView = new ConsoleBrowseView(appContext.getMovieRepository().getAllMovies());
+        browseView.runBrowseView();
     }
     
     public void stopMainView() {

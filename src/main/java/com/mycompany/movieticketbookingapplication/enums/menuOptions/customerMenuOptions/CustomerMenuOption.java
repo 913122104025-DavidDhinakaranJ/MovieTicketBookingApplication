@@ -2,6 +2,7 @@ package com.mycompany.movieticketbookingapplication.enums.menuOptions.customerMe
 
 public enum CustomerMenuOption {
     SEARCH_MOVIE,
+    BROWSE_MOVIE,
     VIEW_BOOKING_HISTORY,
     CHANGE_PASSWORD,
     LOGOUT,

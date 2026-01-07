@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.views.adminViews;
 
+import com.mycompany.movieticketbookingapplication.Exceptions.CinemaHallNameConflictException;
 import com.mycompany.movieticketbookingapplication.controllers.implementations.adminControllersImplementations.ManageSeatController;
 import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageCinemaHallController;
 import com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuOptions.AdminOperationsOption;
@@ -51,10 +52,13 @@ public class ConsoleManageCinemaHallView {
     private void handleAddCinemaHall() {
         String cinemaHallName = getCinemaHallName();
         
-        CinemaHall cinemaHall = cinemaHallController.addCinemaHall(cinemaHallName);
-        handleManageSeats(cinemaHall);
-        
-        System.out.println("Cinema Hall added successfully.");
+        try {
+            CinemaHall cinemaHall = cinemaHallController.addCinemaHall(cinemaHallName);
+            handleManageSeats(cinemaHall); 
+            System.out.println("Cinema Hall added successfully.");
+        } catch (CinemaHallNameConflictException e) {
+            displayError("Cinema Hall with given name already exist.");
+        }
     }
 
     private void handleUpdateCinemaHall() {

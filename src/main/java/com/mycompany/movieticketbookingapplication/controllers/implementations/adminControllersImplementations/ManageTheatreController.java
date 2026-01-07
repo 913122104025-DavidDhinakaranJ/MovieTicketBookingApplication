@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.controllers.implementations.adminControllersImplementations;
 
+import com.mycompany.movieticketbookingapplication.Exceptions.TheatreNameConflictException;
 import com.mycompany.movieticketbookingapplication.models.Theatre;
 import com.mycompany.movieticketbookingapplication.repositories.ITheatreRepository;
 import java.util.List;
@@ -13,7 +14,11 @@ public class ManageTheatreController implements IManageTheatreController {
     }
 
     @Override
-    public Theatre addTheatre(String theatreName, String theatreAddress) {
+    public Theatre addTheatre(String theatreName, String theatreAddress) throws TheatreNameConflictException {
+        if(theatreRepository.isTheatreAlreadyExist(theatreName)) {
+            throw new TheatreNameConflictException();
+        }
+        
         Theatre theatre = new Theatre(theatreName, theatreAddress);
         theatreRepository.addTheatre(theatre);
         return theatre;

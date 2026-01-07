@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces;
 
+import com.mycompany.movieticketbookingapplication.Exceptions.MovieNameConflictException;
 import com.mycompany.movieticketbookingapplication.enums.Genre;
 import com.mycompany.movieticketbookingapplication.enums.Language;
 import com.mycompany.movieticketbookingapplication.enums.Rating;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface IManageMovieController {
-    void addMovie(String title, Set<Genre> genres, Set<Language> languages, Rating rating, int duration, LocalDate date);
+    void addMovie(String title, Set<Genre> genres, Set<Language> languages, Rating rating, int duration, LocalDate date) throws MovieNameConflictException;
     List<Movie> getAllMovies();
     
     void updateMovieGenres(Movie movie, Set<Genre> addGenres, Set<Genre> removeGenres);

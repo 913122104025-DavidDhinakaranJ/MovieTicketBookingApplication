@@ -1,5 +1,6 @@
 package com.mycompany.movieticketbookingapplication.views.adminViews;
 
+import com.mycompany.movieticketbookingapplication.Exceptions.MovieNameConflictException;
 import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageMovieController;
 import com.mycompany.movieticketbookingapplication.enums.Genre;
 import com.mycompany.movieticketbookingapplication.enums.Language;
@@ -62,9 +63,13 @@ public class ConsoleManageMovieView {
         Rating rating = getRating();
         int duration = getDuration();
         LocalDate date = getReleaseDate();
-        
-        movieController.addMovie(title, genres, languages, rating, duration, date);
-        System.out.println("Movie added successfully.");
+            
+        try {
+            movieController.addMovie(title, genres, languages, rating, duration, date);
+            System.out.println("Movie added successfully.");
+        } catch (MovieNameConflictException e) {
+            displayError("Movie with given title already exist.");
+        }
     }
 
     private void handleUpdateMovie() {
