@@ -5,7 +5,9 @@ import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminC
 import com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuOptions.AdminOperationsOption;
 import com.mycompany.movieticketbookingapplication.models.CinemaHall;
 import com.mycompany.movieticketbookingapplication.models.Movie;
+import com.mycompany.movieticketbookingapplication.models.Seat;
 import com.mycompany.movieticketbookingapplication.models.Show;
+import com.mycompany.movieticketbookingapplication.models.ShowSeat;
 import com.mycompany.movieticketbookingapplication.models.Theatre;
 import com.mycompany.movieticketbookingapplication.utils.ConsoleInputUtil;
 import java.time.LocalDateTime;
@@ -28,6 +30,7 @@ public class ConsoleManageShowView {
         while(running) {
             AdminOperationsOption choice = getAdminOperationsOption();
             switch(choice) {
+                case VIEW -> handleViewShows();
                 case ADD -> handleAddShow();
                 case UPDATE -> handleUpdateShow();
                 case DELETE -> handleDeleteShow();
@@ -38,18 +41,27 @@ public class ConsoleManageShowView {
     }
     
     private AdminOperationsOption getAdminOperationsOption() {
-        System.out.println("1. Add Show");
-        System.out.println("2. Update Show Timing");
-        System.out.println("3. Remove Show");
+        System.out.println("1. View Shows");
+        System.out.println("2. Add Show");
+        System.out.println("3. Update Show Timing");
+        System.out.println("4. Remove Show");
         System.out.println("0. Exit");
         
         return switch(inputReader.readInt("Enter choice: ")) {
-            case 1 -> AdminOperationsOption.ADD;
-            case 2 -> AdminOperationsOption.UPDATE;
-            case 3 -> AdminOperationsOption.DELETE;
+            case 1 -> AdminOperationsOption.VIEW;
+            case 2 -> AdminOperationsOption.ADD;
+            case 3 -> AdminOperationsOption.UPDATE;
+            case 4 -> AdminOperationsOption.DELETE;
             case 0 -> AdminOperationsOption.EXIT;
             default -> AdminOperationsOption.INVALID;
         };
+    }
+    
+    private void handleViewShows() {
+        Show show = getShow();
+        if(show == null) return;
+        
+        displayShowDetails(show);
     }
     
     private void handleAddShow() {
@@ -65,9 +77,10 @@ public class ConsoleManageShowView {
         double basePrice = getBasePrice();
         
         do {
-            LocalDateTime[] showTime = getShowTime();
+            LocalDateTime startTime = getStartTime();
+            int breakTime = getBreakTime();
             try {
-                showController.addShow(movie, cinemaHall, theatre, showTime[0], showTime[1], basePrice);
+                showController.addShow(movie, cinemaHall, theatre, startTime, breakTime, basePrice);
                 System.out.println("Show added successfully.");
             } catch (ShowTimeConflictException e) {
                 displayError("Show already exist at the given time slot.");
@@ -79,10 +92,11 @@ public class ConsoleManageShowView {
         Show show = getShow();
         if(show == null) return;
         
-        LocalDateTime[] showTime = getShowTime();
+        LocalDateTime startTime = getStartTime();
+        int breakTime = getBreakTime();
         
         try {
-            showController.updateShow(show, showTime[0], showTime[1]);
+            showController.updateShow(show, startTime, breakTime);
             System.out.println("Show updated successfully.");
         } catch (ShowTimeConflictException e) {
             displayError("Show already exist at the given time slot.");
@@ -117,7 +131,8 @@ public class ConsoleManageShowView {
             System.out.println(i + 1 + ". Theatre: " + show.getTheatre().getName()
                     + "\tCinema Hall: " + show.getCinemaHall().getName()
                     + "\tMovie: " + show.getMovie().getTitle()
-                    + "\tTime: " + inputReader.formatDateTime(show.getStartTime()) + " - " + inputReader.formatDateTime(show.getEndTime()));
+                    + "\tTime: " + inputReader.formatDateTime(show.getStartTime()) + 
+                    " - " + inputReader.formatDateTime(show.getEndTime()));
         }
         System.out.println("0. Back");
         
@@ -203,18 +218,40 @@ public class ConsoleManageShowView {
         }
     }
     
-    private LocalDateTime[] getShowTime() {
+    private LocalDateTime getStartTime() {
         while(true) {
             LocalDateTime startTime = inputReader.readDateTime("Enter Start Time: ");
-            LocalDateTime endTime = inputReader.readDateTime("Enter End Time: ");
             
-            if(startTime.isBefore(endTime)) return new LocalDateTime[] {startTime, endTime};
-            displayError("Start Time must be the time before End Time");
+            if(startTime.isAfter(LocalDateTime.now())) return startTime;
+            displayError("Start Time must be the time in the future.");
         }
+    }
+    
+    private int getBreakTime() {
+        return inputReader.readInt("Enter Break Time (in Minutes): ");
     }
     
     private double getBasePrice() {
         return inputReader.readAmount("Enter Base Price: ");
+    }
+    
+    private void displayShowDetails(Show show) {
+        System.out.println("Movie: " + show.getMovie().getTitle());
+        System.out.println("Theatre: " + show.getTheatre().getName());
+        System.out.println("Cinema Hall: " + show.getCinemaHall().getName());
+        System.out.println("Starting Time: " + inputReader.formatDateTime(show.getStartTime()));
+        System.out.println("Ending Time: " + inputReader.formatDateTime(show.getEndTime()));
+        System.out.println("Base Price: " + show.getPrice());
+        System.out.println("Available Seats: ");
+        List<ShowSeat> availableSeats = show.getAvailableSeats();
+        int seatCount = 0;
+        for(ShowSeat showSeat : availableSeats) {
+            Seat seat = showSeat.getSeat();
+            System.out.print(seat.getRow() + seat.getSeatNumber() + "-" + seat.getSeatType() + "\t");
+            if(++seatCount % 5 == 0) System.out.println();
+        }
+        
+        if(seatCount % 5 != 0) System.out.println();
     }
 
     private void displayError(String message) {

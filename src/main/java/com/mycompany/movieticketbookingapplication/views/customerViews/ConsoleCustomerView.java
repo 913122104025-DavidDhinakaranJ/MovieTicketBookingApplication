@@ -44,8 +44,8 @@ public class ConsoleCustomerView {
     private CustomerMenuOption getCustomerMenuOption() {
         System.out.println("1. Search Movie");
         System.out.println("2. Browse Movie");
-        System.out.println("2. View Booking History");
-        System.out.println("3. Change Password");
+        System.out.println("3. View Booking History");
+        System.out.println("4. Change Password");
         System.out.println("0. Logout");
         
         return switch(inputReader.readInt("Enter choice: ")) {

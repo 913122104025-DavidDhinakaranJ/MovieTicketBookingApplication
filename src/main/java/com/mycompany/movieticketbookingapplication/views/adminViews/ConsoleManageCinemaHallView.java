@@ -25,6 +25,7 @@ public class ConsoleManageCinemaHallView {
         while(running) {
             AdminOperationsOption choice = getAdminOperationsOption();
             switch(choice) {
+                case VIEW -> handleViewCinemaHalls();
                 case ADD -> handleAddCinemaHall();
                 case UPDATE -> handleUpdateCinemaHall();
                 case DELETE -> handleDeleteCinemaHall();
@@ -35,18 +36,32 @@ public class ConsoleManageCinemaHallView {
     }
     
     private AdminOperationsOption getAdminOperationsOption() {
-        System.out.println("1. Add Cinema Hall");
-        System.out.println("2. Manage Seats");
-        System.out.println("3. Remove Cinema Hall");
+        System.out.println("1. View Cinema Halls");
+        System.out.println("2. Add Cinema Hall");
+        System.out.println("3. Manage Seats");
+        System.out.println("4. Remove Cinema Hall");
         System.out.println("0. Exit");
         
         return switch(inputReader.readInt("Enter choice: ")) {
-            case 1 -> AdminOperationsOption.ADD;
-            case 2 -> AdminOperationsOption.UPDATE;
-            case 3 -> AdminOperationsOption.DELETE;
+            case 1 -> AdminOperationsOption.VIEW;
+            case 2 -> AdminOperationsOption.ADD;
+            case 3 -> AdminOperationsOption.UPDATE;
+            case 4 -> AdminOperationsOption.DELETE;
             case 0 -> AdminOperationsOption.EXIT;
             default -> AdminOperationsOption.INVALID;
         };
+    }
+    
+    private void handleViewCinemaHalls() {
+        CinemaHall cinemaHall = getCinemaHall();
+        if(cinemaHall == null) return;
+        
+        displayCinemaHallDetails(cinemaHall);
+    }
+    
+    private void displayCinemaHallDetails(CinemaHall cinemaHall) {
+        System.out.println("Cinema Hall Name: " + cinemaHall.getName());
+        System.out.println("Total Seats: " + cinemaHall.getSeats());
     }
 
     private void handleAddCinemaHall() {

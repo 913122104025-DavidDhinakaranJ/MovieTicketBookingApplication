@@ -20,7 +20,7 @@ public class BookingController implements IBookingController {
 
     @Override
     public boolean isShowExpired() {
-        return booking.getShow().getStartTime().isAfter(LocalDateTime.now());
+        return booking.getShow().getStartTime().isBefore(LocalDateTime.now());
     }
 
     @Override

@@ -24,7 +24,8 @@ public class ManageShowController implements IManageShowController {
     }
 
     @Override
-    public void addShow(Movie movie, CinemaHall cinemaHall, Theatre theatre, LocalDateTime startTime, LocalDateTime endTime, double basePrice) throws ShowTimeConflictException {
+    public void addShow(Movie movie, CinemaHall cinemaHall, Theatre theatre, LocalDateTime startTime, int breakTime, double basePrice) throws ShowTimeConflictException {
+        LocalDateTime endTime = startTime.plusMinutes(breakTime + movie.getDurationInMinutes());
         if(showRepository.isShowTimeConflicting(theatre, cinemaHall, startTime, endTime)) {
             throw new ShowTimeConflictException();
         }
@@ -37,8 +38,9 @@ public class ManageShowController implements IManageShowController {
     }
     
     @Override
-    public void updateShow(Show show, LocalDateTime startTime, LocalDateTime endTime) throws ShowTimeConflictException {
+    public void updateShow(Show show, LocalDateTime startTime, int breakTime) throws ShowTimeConflictException {
         showRepository.deleteShow(show);
+        LocalDateTime endTime = startTime.plusMinutes(breakTime + show.getMovie().getDurationInMinutes());
         
         if(showRepository.isShowTimeConflicting(show.getTheatre(), show.getCinemaHall(), startTime, endTime)) {
             showRepository.addShow(show);

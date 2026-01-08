@@ -1,6 +1,5 @@
 package com.mycompany.movieticketbookingapplication.views.customerViews;
 
-import com.mycompany.movieticketbookingapplication.contexts.ApplicationContext;
 import com.mycompany.movieticketbookingapplication.controllers.interfaces.customerControllersInterfaces.ISearchController;
 import com.mycompany.movieticketbookingapplication.enums.Genre;
 import com.mycompany.movieticketbookingapplication.enums.Language;
@@ -12,14 +11,12 @@ import java.util.List;
 
 public class ConsoleSearchView {
     private final ConsoleInputUtil inputReader;
-    private final ApplicationContext appContext;
     private final ISearchController searchController;
     
     private boolean searching;
     
     public ConsoleSearchView(ISearchController searchController) {
         inputReader = new ConsoleInputUtil();
-        appContext = ApplicationContext.getInstance();
         this.searchController = searchController;
     }
     

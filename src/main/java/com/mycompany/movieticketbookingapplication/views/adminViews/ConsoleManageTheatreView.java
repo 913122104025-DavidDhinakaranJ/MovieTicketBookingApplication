@@ -25,6 +25,7 @@ public class ConsoleManageTheatreView {
         while(running) {
             AdminOperationsOption choice = getAdminOperationsOption();
             switch(choice) {
+                case VIEW -> handleViewTheatres();
                 case ADD -> handleAddTheatre();
                 case UPDATE -> handleUpdateTheatre();
                 case DELETE -> handleDeleteTheatre();
@@ -35,18 +36,27 @@ public class ConsoleManageTheatreView {
     }
     
     private AdminOperationsOption getAdminOperationsOption() {
-        System.out.println("1. Add Theatre");
-        System.out.println("2. Manage Cinema Halls");
-        System.out.println("3. Remove Theatre");
+        System.out.println("1. View Theatres");
+        System.out.println("2. Add Theatre");
+        System.out.println("3. Manage Cinema Halls");
+        System.out.println("4. Remove Theatre");
         System.out.println("0. Exit");
         
         return switch(inputReader.readInt("Enter choice: ")) {
-            case 1 -> AdminOperationsOption.ADD;
-            case 2 -> AdminOperationsOption.UPDATE;
-            case 3 -> AdminOperationsOption.DELETE;
+            case 1 -> AdminOperationsOption.VIEW;
+            case 2 -> AdminOperationsOption.ADD;
+            case 3 -> AdminOperationsOption.UPDATE;
+            case 4 -> AdminOperationsOption.DELETE;
             case 0 -> AdminOperationsOption.EXIT;
             default -> AdminOperationsOption.INVALID;
         };
+    }
+    
+    private void handleViewTheatres() {
+        Theatre theatre = getTheatre();
+        if(theatre == null) return;
+        
+        displayTheatreDetails(theatre);
     }
     
     private void handleAddTheatre() {
@@ -124,6 +134,11 @@ public class ConsoleManageTheatreView {
 
             return theatreList.get(theatreChoice - 1);
         }
+    }
+    
+    private void displayTheatreDetails(Theatre theatre) {
+        System.out.println("Theatre Name: " + theatre.getName());
+        System.out.println("Theatre Address: " + theatre.getAddress());
     }
     
     private void displayError(String message) {

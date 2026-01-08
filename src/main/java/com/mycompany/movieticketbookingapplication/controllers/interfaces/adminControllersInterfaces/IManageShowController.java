@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IManageShowController {
-    void addShow(Movie movie, CinemaHall cinemaHall, Theatre theatre, LocalDateTime startTime, LocalDateTime endTime, double basePrice) throws ShowTimeConflictException;
-    void updateShow(Show show, LocalDateTime startTime, LocalDateTime endTime) throws ShowTimeConflictException;
+    void addShow(Movie movie, CinemaHall cinemaHall, Theatre theatre, LocalDateTime startTime, int breakTime, double basePrice) throws ShowTimeConflictException;
+    void updateShow(Show show, LocalDateTime startTime, int breakTime) throws ShowTimeConflictException;
     void deleteShow(Show show);
     
     List<Show> getAllShows();
