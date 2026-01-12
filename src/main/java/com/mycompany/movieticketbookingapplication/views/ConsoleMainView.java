@@ -29,6 +29,10 @@ public class ConsoleMainView {
     public void runMainView() {
         running = true;
         while(running) {
+            if(appContext.getSessionContext().isLoggedIn()) {
+                handleRunLoginView(appContext.getSessionContext().getCurrentUser().get());
+            }
+            
             MainMenuOption choice = getMainMenuOption();
             switch(choice) {
                 case REGISTER -> handleRegistration();
@@ -61,14 +65,23 @@ public class ConsoleMainView {
     private void handleRegistration() {
         IAuthView authView = new ConsoleAuthView(new AuthController(appContext.getUserRepository(), appContext.getCustomerFactory()));
         User user = (User) authView.handleRegistration(); 
+        if(user == null) return;
         
+        appContext.getSessionContext().login(user);
         handleRunLoginView(user);
     }
 
     private void handleLogin() {
         IAuthView authView = new ConsoleAuthView(new AuthController(appContext.getUserRepository(), null));
         User user = (User) authView.handleLogin();
+        if(user == null) return;
         
+        if(user.isBlocked()) {
+            displayError("Your account is blocked.");
+            return;
+        }
+        
+        appContext.getSessionContext().login(user);
         handleRunLoginView(user);
     }
 
@@ -92,14 +105,6 @@ public class ConsoleMainView {
     }
     
     private void handleRunLoginView(User user) {
-        if(user == null) return;
-        
-        if(user.isBlocked()) {
-            displayError("Your account is blocked.");
-            return;
-        }
-        
-        appContext.getSessionContext().login(user);
         switch(user.getRole()) {
             case CUSTOMER -> {
                 ConsoleCustomerView customerView = new ConsoleCustomerView(new CustomerController((Customer) user));

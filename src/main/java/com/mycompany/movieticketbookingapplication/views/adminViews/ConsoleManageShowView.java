@@ -30,10 +30,8 @@ public class ConsoleManageShowView {
         while(running) {
             AdminOperationsOption choice = getAdminOperationsOption();
             switch(choice) {
-                case VIEW -> handleViewShows();
                 case ADD -> handleAddShow();
-                case UPDATE -> handleUpdateShow();
-                case DELETE -> handleDeleteShow();
+                case VIEW -> handleViewShows();
                 case EXIT -> handleExit();
                 case INVALID -> handleInvalidChoice();
             }
@@ -41,27 +39,49 @@ public class ConsoleManageShowView {
     }
     
     private AdminOperationsOption getAdminOperationsOption() {
-        System.out.println("1. View Shows");
-        System.out.println("2. Add Show");
-        System.out.println("3. Update Show Timing");
-        System.out.println("4. Remove Show");
+        System.out.println("1. Add Show");
+        System.out.println("2. View Shows");
         System.out.println("0. Exit");
         
         return switch(inputReader.readInt("Enter choice: ")) {
-            case 1 -> AdminOperationsOption.VIEW;
-            case 2 -> AdminOperationsOption.ADD;
-            case 3 -> AdminOperationsOption.UPDATE;
-            case 4 -> AdminOperationsOption.DELETE;
+            case 1 -> AdminOperationsOption.ADD;
+            case 2 -> AdminOperationsOption.VIEW;
+            case 0 -> AdminOperationsOption.EXIT;
+            default -> AdminOperationsOption.INVALID;
+        };
+    }
+    
+    private AdminOperationsOption getAdminOperationsOption(Show show) {
+        System.out.println("1. Update Show Timing");
+        System.out.println("2. Remove Show");
+        System.out.println("0. Back");
+        
+        return switch(inputReader.readInt("Enter choice: ")) {
+            case 1 -> AdminOperationsOption.UPDATE;
+            case 2 -> AdminOperationsOption.DELETE;
             case 0 -> AdminOperationsOption.EXIT;
             default -> AdminOperationsOption.INVALID;
         };
     }
     
     private void handleViewShows() {
-        Show show = getShow();
-        if(show == null) return;
+        Show currentShow = getShow();
+        if(currentShow == null) return;
         
-        displayShowDetails(show);
+        displayShowDetails(currentShow);
+        
+        while(currentShow != null) {
+            AdminOperationsOption choice = getAdminOperationsOption(currentShow);
+            switch(choice) {
+                case UPDATE -> handleUpdateShow(currentShow);
+                case DELETE -> {
+                    handleDeleteShow(currentShow);
+                    currentShow = null;
+                }
+                case EXIT -> currentShow = null;
+                case INVALID -> handleInvalidChoice();
+            }
+        }
     }
     
     private void handleAddShow() {
@@ -88,10 +108,7 @@ public class ConsoleManageShowView {
         } while(inputReader.readBoolean("Do you want to continue to add shows?"));
     }
 
-    private void handleUpdateShow() {
-        Show show = getShow();
-        if(show == null) return;
-        
+    private void handleUpdateShow(Show show) {
         LocalDateTime startTime = getStartTime();
         int breakTime = getBreakTime();
         
@@ -103,10 +120,7 @@ public class ConsoleManageShowView {
         }
     }
 
-    private void handleDeleteShow() {
-        Show show = getShow();
-        if(show == null) return;
-        
+    private void handleDeleteShow(Show show) {
         showController.deleteShow(show);
         System.out.println("Show removed successfully.");
     }
@@ -247,7 +261,7 @@ public class ConsoleManageShowView {
         int seatCount = 0;
         for(ShowSeat showSeat : availableSeats) {
             Seat seat = showSeat.getSeat();
-            System.out.print(seat.getRow() + seat.getSeatNumber() + "-" + seat.getSeatType() + "\t");
+            System.out.print(seat.getRow() + seat.getSeatNumber() + " - " + seat.getSeatType() + "\t");
             if(++seatCount % 5 == 0) System.out.println();
         }
         

@@ -6,12 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface IManageAdminController {
-    void updatePrivileges(Admin admin, Set<Privilege> grantPrivileges, Set<Privilege> revokePrivileges);
-    
     List<Admin> getAllAdmins();
-    List<String> getNonBlockedAdmins();
-    List<String> getBlockedAdmins();
     
-    void blockAdmin(String username);
-    void unblockAdmin(String username);
+    void updatePrivileges(Admin admin, Set<Privilege> grantPrivileges, Set<Privilege> revokePrivileges);
+    void blockAdmin(Admin admin);
+    void unblockAdmin(Admin admin);
 }

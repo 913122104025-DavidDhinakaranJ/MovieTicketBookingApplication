@@ -1,6 +1,7 @@
 package com.mycompany.movieticketbookingapplication.controllers.implementations.adminControllersImplementations;
 
 import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageCustomerController;
+import com.mycompany.movieticketbookingapplication.models.users.Customer;
 import com.mycompany.movieticketbookingapplication.repositories.IUserRepository;
 import java.util.List;
 
@@ -12,23 +13,18 @@ public class ManageCustomerController implements IManageCustomerController {
     }
 
     @Override
-    public List<String> getNonBlockedCustomers() {
-        return userRepository.getNonBlockedCustomers();
+    public void blockCustomer(Customer customer) {
+        customer.blockUser();
     }
 
     @Override
-    public List<String> getBlockedCustomers() {
-        return userRepository.getBlockedCustomers();
+    public void unblockCustomer(Customer customer) {
+        customer.unblockUser();
     }
 
     @Override
-    public void blockCustomer(String username) {
-        userRepository.getUser(username).blockUser();
-    }
-
-    @Override
-    public void unblockCustomer(String username) {
-        userRepository.getUser(username).unblockUser();
+    public List<Customer> getAllCustomers() {
+        return userRepository.getAllCustomers();
     }
     
 }

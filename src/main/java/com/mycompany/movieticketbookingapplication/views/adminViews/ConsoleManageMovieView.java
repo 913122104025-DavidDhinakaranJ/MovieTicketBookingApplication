@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 public class ConsoleManageMovieView {
     private final ConsoleInputUtil inputReader;
@@ -33,8 +34,7 @@ public class ConsoleManageMovieView {
             AdminOperationsOption choice = getAdminOperationsOption();
             switch(choice) {
                 case ADD -> handleAddMovie();
-                case UPDATE -> handleUpdateMovie();
-                case DELETE -> handleDeleteMovie();
+                case VIEW -> handleViewMovies();
                 case EXIT -> handleExit();
                 case INVALID -> handleInvalidChoice();
             }
@@ -43,14 +43,25 @@ public class ConsoleManageMovieView {
     
     private AdminOperationsOption getAdminOperationsOption() {
         System.out.println("1. Add Movie");
-        System.out.println("2. Update Movie");
-        System.out.println("3. Remove Movie");
+        System.out.println("2. View Movies");
         System.out.println("0. Exit");
 
         return switch(inputReader.readInt("Enter choice: ")) {
             case 1 -> AdminOperationsOption.ADD;
-            case 2 -> AdminOperationsOption.UPDATE;
-            case 3 -> AdminOperationsOption.DELETE;
+            case 2 -> AdminOperationsOption.VIEW;
+            case 0 -> AdminOperationsOption.EXIT;
+            default -> AdminOperationsOption.INVALID;
+        };
+    }
+    
+    private AdminOperationsOption getAdminOperationsOption(Movie movie) {
+        System.out.println("1. Update Movie");
+        System.out.println("2. Remove Movie");
+        System.out.println("0. Back");
+
+        return switch(inputReader.readInt("Enter choice: ")) {
+            case 1 -> AdminOperationsOption.UPDATE;
+            case 2 -> AdminOperationsOption.DELETE;
             case 0 -> AdminOperationsOption.EXIT;
             default -> AdminOperationsOption.INVALID;
         };
@@ -71,11 +82,28 @@ public class ConsoleManageMovieView {
             displayError("Movie with given title already exist.");
         }
     }
-
-    private void handleUpdateMovie() {
-        Movie movie = getMovie();
-        if(movie == null) return;
+    
+    private void handleViewMovies() {
+        Movie currentMovie = getMovie();
+        if(currentMovie == null) return;
         
+        displayMovieDetails(currentMovie);
+        
+        while(currentMovie != null) {
+            AdminOperationsOption choice = getAdminOperationsOption(currentMovie);
+            switch(choice) {
+                case UPDATE -> handleUpdateMovie(currentMovie);
+                case DELETE -> {
+                    handleDeleteMovie(currentMovie);
+                    currentMovie = null;
+                }
+                case EXIT -> currentMovie = null;
+                case INVALID -> handleInvalidChoice();
+            }
+        } 
+    }
+
+    private void handleUpdateMovie(Movie movie) {
         MovieUpdateOption choice = getMovieUpdateOption();
         switch(choice) {
             case UPDATE_GENRES -> handleUpdateGenres(movie);
@@ -86,10 +114,7 @@ public class ConsoleManageMovieView {
         }
     }
 
-    private void handleDeleteMovie() {
-        Movie movie = getMovie();
-        if(movie == null) return;
-        
+    private void handleDeleteMovie(Movie movie) {
         movieController.deleteMovie(movie);
         System.out.println("Movie removed successfully.");
     }
@@ -282,6 +307,15 @@ public class ConsoleManageMovieView {
         movieController.updateMovieReleaseDate(movie, date);
         
         System.out.println("Release Date updated Successfully.");
+    }
+    
+    private void displayMovieDetails(Movie movie) {
+        System.out.println("Movie Title: " + movie.getTitle());
+        System.out.println("Movie Genres: " + Arrays.stream(movie.getGenres().toArray()).map(String::valueOf).collect(Collectors.joining(", ")));
+        System.out.println("Movie Duration: " + movie.getDurationInMinutes() + " Minutes");
+        System.out.println("Movie Languages: " + Arrays.stream(movie.getLanguages().toArray()).map(String::valueOf).collect(Collectors.joining(", ")));
+        System.out.println("Movie Rating: " + movie.getRating());
+        System.out.println("Movie Release Date: " + movie.getReleaseDate());
     }
     
     private void displayError(String message) {

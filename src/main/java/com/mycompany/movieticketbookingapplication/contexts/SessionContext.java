@@ -14,6 +14,10 @@ public class SessionContext {
     public void logout() {
         this.currentUser = null;
     }
+    
+    public boolean isLoggedIn() {
+        return this.currentUser != null;
+    }
 
     public Optional<User> getCurrentUser() {
         return Optional.ofNullable(currentUser);

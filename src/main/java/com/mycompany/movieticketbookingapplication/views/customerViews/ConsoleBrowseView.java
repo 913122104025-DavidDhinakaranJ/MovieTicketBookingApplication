@@ -1,10 +1,8 @@
 package com.mycompany.movieticketbookingapplication.views.customerViews;
 
 import com.mycompany.movieticketbookingapplication.contexts.ApplicationContext;
-import com.mycompany.movieticketbookingapplication.controllers.implementations.customerControllersImplementations.CustomerController;
 import com.mycompany.movieticketbookingapplication.controllers.implementations.customerControllersImplementations.MovieController;
 import com.mycompany.movieticketbookingapplication.models.Movie;
-import com.mycompany.movieticketbookingapplication.models.users.Customer;
 import com.mycompany.movieticketbookingapplication.utils.ConsoleInputUtil;
 import java.util.List;
 
@@ -22,12 +20,6 @@ public class ConsoleBrowseView {
     public void runBrowseView() {
         displayMovies();
         handleMoviesListSelection();
-        
-        Customer customer = (Customer) appContext.getSessionContext().getCurrentUser().orElse(null);
-        if(customer != null) {
-            ConsoleCustomerView customerView = new ConsoleCustomerView(new CustomerController(customer));
-            customerView.runCustomerView();
-        }
     }
     
     private void displayMovies() {

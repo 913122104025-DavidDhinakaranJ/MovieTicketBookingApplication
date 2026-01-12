@@ -3,6 +3,6 @@ package com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuO
 public enum CustomerManageOption {
     BLOCK,
     UNBLOCK,
-    EXIT,
+    BACK,
     INVALID;
 }

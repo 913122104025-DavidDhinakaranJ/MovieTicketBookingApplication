@@ -1,11 +1,11 @@
 package com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces;
 
+import com.mycompany.movieticketbookingapplication.models.users.Customer;
 import java.util.List;
 
 public interface IManageCustomerController {
-    List<String> getNonBlockedCustomers();
-    List<String> getBlockedCustomers();
-    
-    void blockCustomer(String username);
-    void unblockCustomer(String username);
+    void blockCustomer(Customer customer);
+    void unblockCustomer(Customer customer);
+
+    List<Customer> getAllCustomers();
 }

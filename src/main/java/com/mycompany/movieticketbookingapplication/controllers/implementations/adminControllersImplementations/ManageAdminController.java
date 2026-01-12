@@ -30,23 +30,15 @@ public class ManageAdminController implements IManageAdminController {
     }
 
     @Override
-    public List<String> getNonBlockedAdmins() {
-        return userRepository.getNonBlockedAdmins();
+    public void blockAdmin(Admin admin) {
+        admin.blockUser();
+        userRepository.saveUser(admin);
     }
 
     @Override
-    public List<String> getBlockedAdmins() {
-        return userRepository.getBlockedAdmins();
-    }
-
-    @Override
-    public void blockAdmin(String username) {
-        userRepository.getUser(username).blockUser();
-    }
-
-    @Override
-    public void unblockAdmin(String username) {
-        userRepository.getUser(username).unblockUser();
+    public void unblockAdmin(Admin admin) {
+        admin.unblockUser();
+        userRepository.saveUser(admin);
     }
     
 }

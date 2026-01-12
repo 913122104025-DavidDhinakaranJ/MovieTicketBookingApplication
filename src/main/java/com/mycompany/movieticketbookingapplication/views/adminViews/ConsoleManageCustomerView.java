@@ -2,6 +2,7 @@ package com.mycompany.movieticketbookingapplication.views.adminViews;
 
 import com.mycompany.movieticketbookingapplication.controllers.interfaces.adminControllersInterfaces.IManageCustomerController;
 import com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuOptions.CustomerManageOption;
+import com.mycompany.movieticketbookingapplication.models.users.Customer;
 import com.mycompany.movieticketbookingapplication.utils.ConsoleInputUtil;
 import java.util.List;
 
@@ -19,81 +20,39 @@ public class ConsoleManageCustomerView {
     public void runManageCustomerView() {
         running = true;
         while(running) {
-            CustomerManageOption choice = getCustomerManageOption();
-            switch(choice) {
-                case BLOCK -> handleBlockCustomer();
-                case UNBLOCK -> handleUnblockCustomer();
-                case EXIT -> handleExit();
-                case INVALID -> handleInvalidChoice();
+            Customer currentCustomer = getCustomer();
+            if(currentCustomer == null) handleExit();
+            
+            while(currentCustomer != null) {
+                CustomerManageOption choice = getCustomerManageOption(currentCustomer);
+                switch(choice) {
+                    case BLOCK -> handleBlockCustomer(currentCustomer);
+                    case UNBLOCK -> handleUnblockCustomer(currentCustomer);
+                    case BACK -> currentCustomer = null;
+                    case INVALID -> handleInvalidChoice();
+                }
             }
         }
     }
     
-    private CustomerManageOption getCustomerManageOption() {
-        System.out.println("1. Block Customer");
-        System.out.println("2. Unblock Customer");
-        System.out.println("0. Exit");
+    private CustomerManageOption getCustomerManageOption(Customer customer) {
+        boolean isBlockedCustomer = customer.isBlocked();
+        System.out.println("1. " + (isBlockedCustomer ? "Unblock Customer" : "Block Customer"));
+        System.out.println("0. Back");
         
         return switch(inputReader.readInt("Enter choice: ")) {
-            case 1 -> CustomerManageOption.BLOCK;
-            case 2 -> CustomerManageOption.UNBLOCK;
-            case 0 -> CustomerManageOption.EXIT;
+            case 1 -> isBlockedCustomer ? CustomerManageOption.UNBLOCK : CustomerManageOption.BLOCK;
+            case 0 -> CustomerManageOption.BACK;
             default -> CustomerManageOption.INVALID;
         };
     }
     
-    private void handleBlockCustomer() {
-        List<String> nonBlockedCustomers = manageCustomerController.getNonBlockedCustomers();
-        
-        if(nonBlockedCustomers.isEmpty()) {
-            System.out.println("No non-blocked customer exist.");
-            return;
-        }
-        
-        for(int i = 0; i < nonBlockedCustomers.size();i++) {
-            System.out.println(i + 1 + ". " + nonBlockedCustomers.get(i));
-        }
-        System.out.println("0. Back");
-        
-        while(true) {
-            int blockChoice = inputReader.readInt("Enter Choice to block customer: ");
-            if(blockChoice == 0) return;
-
-            if(blockChoice < 1 || blockChoice > nonBlockedCustomers.size()) {
-                displayError("Invalid Customer Choice");
-                continue;
-            }
-            
-            manageCustomerController.blockCustomer(nonBlockedCustomers.get(blockChoice - 1));
-            return;
-        }
+    private void handleBlockCustomer(Customer customer) {
+        manageCustomerController.blockCustomer(customer);
     }
 
-    private void handleUnblockCustomer() {
-        List<String> blockedCustomers = manageCustomerController.getBlockedCustomers();
-        
-        if(blockedCustomers.isEmpty()) {
-            System.out.println("No blocked customer exist.");
-            return;
-        }
-        
-        for(int i = 0; i < blockedCustomers.size();i++) {
-            System.out.println(i + 1 + ". " + blockedCustomers.get(i));
-        }
-        System.out.println("0. Back");
-        
-        while(true) {
-            int unblockChoice = inputReader.readInt("Enter Choice to unblock customer: ");
-            if(unblockChoice == 0) return;
-
-            if(unblockChoice < 1 || unblockChoice > blockedCustomers.size()) {
-                displayError("Invalid Customer Choice");
-                continue;
-            }
-            
-            manageCustomerController.unblockCustomer( blockedCustomers.get(unblockChoice - 1));
-            return;
-        }
+    private void handleUnblockCustomer(Customer customer) {
+        manageCustomerController.unblockCustomer(customer);
     }
 
     private void handleExit() {
@@ -102,6 +61,27 @@ public class ConsoleManageCustomerView {
 
     private void handleInvalidChoice() {
         displayError("Invalid Choice");
+    }
+    
+    private Customer getCustomer() {
+        List<Customer> customers = manageCustomerController.getAllCustomers();
+        
+        for(int i = 0; i < customers.size();i++) {
+            System.out.println(i + 1 + ". " + customers.get(i).getUsername());
+        }
+        System.out.println("0. Back");
+        
+        while(true) {
+            int choice = inputReader.readInt("Enter Customer Choice: ");
+            if(choice == 0) return null;
+
+            if(choice < 1 || choice > customers.size()) {
+                displayError("Invalid Customer Choice");
+                continue;
+            }
+            
+            return customers.get(choice - 1);
+        }
     }
     
     private void displayError(String message) {

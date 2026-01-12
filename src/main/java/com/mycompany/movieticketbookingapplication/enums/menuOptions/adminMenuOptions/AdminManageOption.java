@@ -2,6 +2,7 @@ package com.mycompany.movieticketbookingapplication.enums.menuOptions.adminMenuO
 
 public enum AdminManageOption {
     ADD_ADMIN,
+    VIEW_ADMINS,
     MANAGE_PRIVILEGES,
     BLOCK_ADMIN,
     UNBLOCK_ADMIN,

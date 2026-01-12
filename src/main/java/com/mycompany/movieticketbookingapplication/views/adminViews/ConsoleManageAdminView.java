@@ -33,9 +33,7 @@ public class ConsoleManageAdminView {
             AdminManageOption choice = getAdminManageOption();
             switch(choice) {
                 case ADD_ADMIN -> handleAddAdmin();
-                case MANAGE_PRIVILEGES -> handleManagePrivileges();
-                case BLOCK_ADMIN -> handleBlockAdmin();
-                case UNBLOCK_ADMIN -> handleUnblockAdmin();
+                case VIEW_ADMINS -> handleViewAdmins();
                 case EXIT -> handleExit();
                 case INVALID -> handleInvalidChoice();
             }
@@ -43,17 +41,27 @@ public class ConsoleManageAdminView {
     }
     
     private AdminManageOption getAdminManageOption() {
-        System.out.println("1. Add new admin");
-        System.out.println("2. Manage Privileges");
-        System.out.println("3. Block Admin");
-        System.out.println("4. Unblock Admin");
+        System.out.println("1. Add New Admin");
+        System.out.println("2. View Admins");
         System.out.println("0. Exit");
         
         return switch(inputReader.readInt("Enter choice: ")) {
             case 1 -> AdminManageOption.ADD_ADMIN;
-            case 2 -> AdminManageOption.MANAGE_PRIVILEGES;
-            case 3 -> AdminManageOption.BLOCK_ADMIN;
-            case 4 -> AdminManageOption.UNBLOCK_ADMIN;
+            case 2 -> AdminManageOption.VIEW_ADMINS;
+            case 0 -> AdminManageOption.EXIT;
+            default -> AdminManageOption.INVALID;
+        };
+    }
+    
+    private AdminManageOption getAdminManageOption(Admin admin) {
+        boolean isBlockedAdmin = admin.isBlocked();
+        System.out.println("1. Manage Privileges");
+        System.out.println("2. " + (isBlockedAdmin ? "Unblock Admin" :"Block Admin"));
+        System.out.println("0. Back");
+        
+        return switch(inputReader.readInt("Enter choice: ")) {
+            case 1 -> AdminManageOption.MANAGE_PRIVILEGES;
+            case 2 -> isBlockedAdmin ? AdminManageOption.UNBLOCK_ADMIN : AdminManageOption.BLOCK_ADMIN;
             case 0 -> AdminManageOption.EXIT;
             default -> AdminManageOption.INVALID;
         };
@@ -63,11 +71,26 @@ public class ConsoleManageAdminView {
         IAuthView authView = new ConsoleAuthView(new AuthController(appContext.getUserRepository(), appContext.getAdminFactory()));
         authView.handleRegistration();
     }
-
-    private void handleManagePrivileges() {
-        Admin admin = getAdmin();
-        if(admin == null) return;
+    
+    private void handleViewAdmins() {
+        Admin currentAdmin = getAdmin();
+        if(currentAdmin == null) return;
         
+        displayAdminDetails(currentAdmin);
+        
+        while(currentAdmin != null) {
+            AdminManageOption choice = getAdminManageOption(currentAdmin);
+            switch(choice) {
+                case MANAGE_PRIVILEGES -> handleManagePrivileges(currentAdmin);
+                case BLOCK_ADMIN -> handleBlockAdmin(currentAdmin);
+                case UNBLOCK_ADMIN -> handleUnblockAdmin(currentAdmin);
+                case EXIT -> currentAdmin = null;
+                case INVALID -> handleInvalidChoice();
+            }
+        }
+    }
+
+    private void handleManagePrivileges(Admin admin) {
         List<Privilege> existingPrivileges = admin.getPrivileges();
         List<Privilege> nonExistingPrivileges = Arrays.stream(Privilege.values()).filter(p -> !existingPrivileges.contains(p)).toList();
         
@@ -89,53 +112,12 @@ public class ConsoleManageAdminView {
         System.out.println("Privileges updated Successfully.");
     }
 
-    private void handleBlockAdmin() {
-        List<String> nonBlockedAdmins = manageAdminController.getNonBlockedAdmins();
-        
-        for(int i = 0; i < nonBlockedAdmins.size();i++) {
-            System.out.println(i + 1 + ". " + nonBlockedAdmins.get(i));
-        }
-        System.out.println("0. Back");
-        
-        while(true) {
-            int blockChoice = inputReader.readInt("Enter Choice to block Admin: ");
-            if(blockChoice == 0) return;
-
-            if(blockChoice <= 0 || blockChoice > nonBlockedAdmins.size()) {
-                displayError("Invalid Admin Choice");
-                continue;
-            }
-            
-            manageAdminController.blockAdmin(nonBlockedAdmins.get(blockChoice - 1));
-            return;
-        }
+    private void handleBlockAdmin(Admin admin) {
+        manageAdminController.blockAdmin(admin);
     }
 
-    private void handleUnblockAdmin() {
-        List<String> blockedAdmins = manageAdminController.getBlockedAdmins();
-        
-        if(blockedAdmins.isEmpty()) {
-            System.out.println("No blocked Admin exist.");
-            return;
-        }
-        
-        for(int i = 0; i < blockedAdmins.size();i++) {
-            System.out.println(i + 1 + ". " + blockedAdmins.get(i));
-        }
-        System.out.println("0. Back");
-        
-        while(true) {
-            int unblockChoice = inputReader.readInt("Enter Choice to unblock Admin: ");
-            if(unblockChoice == 0) return;
-
-            if(unblockChoice <= 0 || unblockChoice > blockedAdmins.size()) {
-                displayError("Invalid Admin Choice");
-                continue;
-            }
-            
-            manageAdminController.unblockAdmin( blockedAdmins.get(unblockChoice - 1));
-            return;
-        }
+    private void handleUnblockAdmin(Admin admin) {
+        manageAdminController.unblockAdmin(admin);
     }
 
     private void handleExit() {
@@ -192,6 +174,15 @@ public class ConsoleManageAdminView {
         }
         
         return privilegeList;
+    }
+    
+    private void displayAdminDetails(Admin admin) {
+        System.out.println("Admin UserName: " + admin.getUsername());
+        System.out.println("Status: " + (admin.isBlocked() ? "Blocked" : "Active"));
+        System.out.println("Privileges: ");
+        for(Privilege privilege : Privilege.values()) {
+            System.out.println((admin.hasPrivilege(privilege) ? "+ " : "- ") + privilege);
+        }
     }
     
     private void displayError(String message) {

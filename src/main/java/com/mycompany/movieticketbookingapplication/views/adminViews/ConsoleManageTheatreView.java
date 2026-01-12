@@ -25,10 +25,8 @@ public class ConsoleManageTheatreView {
         while(running) {
             AdminOperationsOption choice = getAdminOperationsOption();
             switch(choice) {
-                case VIEW -> handleViewTheatres();
                 case ADD -> handleAddTheatre();
-                case UPDATE -> handleUpdateTheatre();
-                case DELETE -> handleDeleteTheatre();
+                case VIEW -> handleViewTheatres();
                 case EXIT -> handleExit();
                 case INVALID -> handleInvalidChoice();
             }
@@ -36,27 +34,29 @@ public class ConsoleManageTheatreView {
     }
     
     private AdminOperationsOption getAdminOperationsOption() {
-        System.out.println("1. View Theatres");
-        System.out.println("2. Add Theatre");
-        System.out.println("3. Manage Cinema Halls");
-        System.out.println("4. Remove Theatre");
+        System.out.println("1. Add Theatre");
+        System.out.println("2. View Theatres");
         System.out.println("0. Exit");
         
         return switch(inputReader.readInt("Enter choice: ")) {
-            case 1 -> AdminOperationsOption.VIEW;
-            case 2 -> AdminOperationsOption.ADD;
-            case 3 -> AdminOperationsOption.UPDATE;
-            case 4 -> AdminOperationsOption.DELETE;
+            case 1 -> AdminOperationsOption.ADD;
+            case 2 -> AdminOperationsOption.VIEW;
             case 0 -> AdminOperationsOption.EXIT;
             default -> AdminOperationsOption.INVALID;
         };
     }
     
-    private void handleViewTheatres() {
-        Theatre theatre = getTheatre();
-        if(theatre == null) return;
+    private AdminOperationsOption getAdminOperationsOption(Theatre theatre) {
+        System.out.println("1. Manage Cinema Halls");
+        System.out.println("2. Remove Theatre");
+        System.out.println("0. Back");
         
-        displayTheatreDetails(theatre);
+        return switch(inputReader.readInt("Enter choice: ")) {
+            case 1 -> AdminOperationsOption.UPDATE;
+            case 2 -> AdminOperationsOption.DELETE;
+            case 0 -> AdminOperationsOption.EXIT;
+            default -> AdminOperationsOption.INVALID;
+        };
     }
     
     private void handleAddTheatre() {
@@ -71,19 +71,33 @@ public class ConsoleManageTheatreView {
             displayError("Theatre with given name already exist.");
         }
     }
-
-    private void handleUpdateTheatre() {
+    
+    private void handleViewTheatres() {
         Theatre theatre = getTheatre();
         if(theatre == null) return;
         
+        displayTheatreDetails(theatre);
+        
+        while(theatre != null) {
+            AdminOperationsOption choice = getAdminOperationsOption(theatre);
+            switch(choice) {
+                case UPDATE -> handleUpdateTheatre(theatre);
+                case DELETE -> {
+                    handleDeleteTheatre(theatre);
+                    theatre = null;
+                }
+                case EXIT -> theatre = null;
+                case INVALID -> handleInvalidChoice();
+            }
+        }
+    }
+
+    private void handleUpdateTheatre(Theatre theatre) {
         ConsoleManageCinemaHallView cinemaHallView = new ConsoleManageCinemaHallView(new ManageCinemaHallController(theatre));
         cinemaHallView.runCinemaHallView();
     }
 
-    private void handleDeleteTheatre() {
-        Theatre theatre = getTheatre();
-        if(theatre == null) return;
-        
+    private void handleDeleteTheatre(Theatre theatre) {
         theatreController.deleteTheatre(theatre);
         System.out.println("Theatre removed successfully.");
     }
